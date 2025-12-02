@@ -1,1 +1,26 @@
-1
+{
+  "name": "soroban-interactive",
+  "version": "1.0.0",
+  "description": "Interactive Soroban (Japanese Abacus) with drag & drop support - MindWorld School",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite --open"
+  },
+  "keywords": [
+    "soroban",
+    "abacus",
+    "mental-arithmetic",
+    "education",
+    "mindworld-school"
+  ],
+  "author": "MindWorld School",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {}
+}
