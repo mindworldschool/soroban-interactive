@@ -1,1 +1,375 @@
-1
+/* ==========================================
+   БАЗОВЫЕ СТИЛИ И ПЕРЕМЕННЫЕ
+   ========================================== */
+
+:root {
+  --primary: #ff8c42;
+  --primary-hover: #ff7528;
+  --secondary: #4a90e2;
+  --success: #4caf50;
+  --error: #f44336;
+  --warning: #ff9800;
+  --text-primary: #2c3e50;
+  --text-secondary: #7f8c8d;
+  --bg-light: #f9f9f9;
+  --bg-white: #ffffff;
+  --border: #e0e0e0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --radius: 12px;
+  --spacing: 1rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: var(--text-primary);
+  background: #fef8f0;
+  min-height: 100vh;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.app-header {
+  background: var(--primary);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px var(--shadow);
+  position: relative;
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header__logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.app-header__titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header__title {
+  font-family: "Baloo 2", cursive;
+  font-size: 1.8rem;
+  color: var(--bg-white);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.title-main {
+  display: block;
+}
+
+.app-header__tagline {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Right side of header */
+.app-header__right {
+  display: flex;
+  align-items: center;
+}
+
+/* Языковой переключатель - капсула */
+.app-header__languages {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  padding: 4px;
+  gap: 0;
+}
+
+.language-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.language-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.language-btn--active {
+  background: var(--bg-white) !important;
+  color: var(--primary) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================
+   MAIN CONTAINER
+   ========================================== */
+
+.app-main {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ==========================================
+   FOOTER
+   ========================================== */
+
+.app-footer {
+  background: var(--primary);
+  color: var(--bg-white);
+  text-align: center;
+  padding: 0.75rem;
+  font-size: 0.85rem;
+}
+
+/* ==========================================
+   ЭКРАНЫ (SCREENS)
+   ========================================== */
+
+.screen {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px var(--shadow);
+  padding: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  animation: fadeIn 0.3s ease;
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen__footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* ==========================================
+   КНОПКИ
+   ========================================== */
+
+.btn {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: var(--bg-white);
+}
+
+.btn--primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+
+.btn--secondary:hover {
+  background: var(--primary);
+  color: var(--bg-white);
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* ==========================================
+   АБАКУС
+   ========================================== */
+
+.abacus-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  min-height: 350px;
+}
+
+/* ==========================================
+   МОДАЛЬНОЕ ОКНО НАСТРОЕК
+   ========================================== */
+
+.config-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.config-modal {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 8px 32px var(--shadow);
+}
+
+.config-modal__title {
+  font-family: "Baloo 2", cursive;
+  font-size: 1.8rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.config-modal__footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================
+   ФОРМЫ
+   ========================================== */
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group__label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.form-group__label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--primary);
+}
+
+.form-group__select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.form-group__select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+}
+
+/* ==========================================
+   АДАПТИВНОСТЬ
+   ========================================== */
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .app-header__brand {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .app-header__title {
+    font-size: 1.5rem;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+
+  .screen {
+    padding: 1.5rem;
+  }
+
+  .abacus-container {
+    padding: 0.5rem;
+    min-height: 300px;
+  }
+
+  .screen__footer {
+    flex-direction: column;
+  }
+
+  .config-modal {
+    padding: 1.5rem;
+  }
+}
