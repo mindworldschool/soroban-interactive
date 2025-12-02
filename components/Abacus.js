@@ -56,10 +56,10 @@ export class Abacus {
           isDragging: false
         },
         earth: [
-          { position: 'down', y: 228, isDragging: false },
-          { position: 'down', y: 228 + this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 228 + this.config.beadHeight * 2, isDragging: false },
-          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar, isDragging: false }
+          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 3 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 2 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 1 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 0 * this.config.beadHeight, isDragging: false }
         ]
       };
     }
