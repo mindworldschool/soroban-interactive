@@ -151,8 +151,10 @@ export class AbacusInteraction {
 
       // Update position based on current Y for real-time digit update
       // Heaven bead is active (down) ONLY when very close to bar (>80% of range toward bar)
-      const minY = 40 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar;
-      const maxY = 91 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar - 1;
+      const beadHeight = this.abacus.config.beadHeight;
+      const gap = 1;
+      const minY = 60 + beadHeight / 2 + gap;  // 79 - inactive (up)
+      const maxY = 111 - beadHeight / 2 - gap; // 92 - active (down)
       const range = maxY - minY;
       const activeThreshold = minY + 0.8 * range; // Active ONLY if moved 80%+ toward bar
       this.abacus.beads[col].heaven.position = clampedY > activeThreshold ? 'down' : 'up';
@@ -162,12 +164,14 @@ export class AbacusInteraction {
 
       // Update positions for all earth beads based on current Y
       // Earth bead is active (up) ONLY when very close to bar (>80% of range toward bar)
-      const minY = 101 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar + 1;
-      const maxY = 264 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar;
-      const range = maxY - minY;
-      const activeThreshold = maxY - 0.8 * range; // Active ONLY if moved 80%+ toward bar
+      const beadHeightEarth = this.abacus.config.beadHeight;
+      const gapEarth = 1;
+      const minYEarth = 121 + beadHeightEarth / 2 + gapEarth; // 140 - active (up)
+      const maxYEarth = 284 - beadHeightEarth / 2 - gapEarth; // 265 - inactive (down)
+      const rangeEarth = maxYEarth - minYEarth;
+      const activeThresholdEarth = maxYEarth - 0.8 * rangeEarth; // Active ONLY if moved 80%+ toward bar
       this.abacus.beads[col].earth.forEach(bead => {
-        bead.position = bead.y < activeThreshold ? 'up' : 'down';
+        bead.position = bead.y < activeThresholdEarth ? 'up' : 'down';
       });
     }
 
@@ -197,10 +201,11 @@ export class AbacusInteraction {
     const minGap = 0; // No gap - beads touch each other
 
     // Get base constraints (bar and frame limits)
-    const barBottom = 101;
-    const bottomFrame = 264;
-    const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
-    const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
+    const barBottom = 121;  // Bottom of middle bar
+    const bottomFrame = 284; // Top of bottom frame
+    const gap = 1;
+    const minY = barBottom + beadHeight / 2 + gap; // 121 + 18 + 1 = 140
+    const maxY = bottomFrame - beadHeight / 2 - gap; // 284 - 18 - 1 = 265
 
     // Constrain to frame limits first
     let newY = Math.max(minY, Math.min(maxY, desiredY));
@@ -247,8 +252,9 @@ export class AbacusInteraction {
     const beadHeight = this.abacus.config.beadHeight;
     const minGap = 0;
 
-    const barBottom = 101;
-    const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
+    const barBottom = 121;  // Bottom of middle bar
+    const gap = 1;
+    const minY = barBottom + beadHeight / 2 + gap; // 140
 
     // Start with dragged bead position
     const positions = {};
@@ -301,8 +307,9 @@ export class AbacusInteraction {
     const beadHeight = this.abacus.config.beadHeight;
     const minGap = 0;
 
-    const bottomFrame = 264;
-    const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
+    const bottomFrame = 284;  // Top of bottom frame
+    const gap = 1;
+    const maxY = bottomFrame - beadHeight / 2 - gap; // 265
 
     // Start with dragged bead position
     const positions = {};

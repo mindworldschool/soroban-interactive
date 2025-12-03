@@ -33,20 +33,21 @@ export class AbacusPhysics {
       : this.abacus.beads[col].earth[index];
 
     const currentY = beadRef.y;
-    const barY = this.abacus.config.barY;
+    const beadHeight = this.abacus.config.beadHeight;
+    const gap = 1;
 
     // Determine position based on current Y coordinate
     if (type === 'heaven') {
       // Heaven bead: active ('down') ONLY when very close to bar (>80% of range toward bar)
-      const minY = 40 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar;
-      const maxY = 91 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar - 1;
+      const minY = 60 + beadHeight / 2 + gap;  // 79 - inactive (up)
+      const maxY = 111 - beadHeight / 2 - gap; // 92 - active (down)
       const range = maxY - minY;
       const activeThreshold = minY + 0.8 * range; // Active ONLY if moved 80%+ toward bar
       beadRef.position = currentY > activeThreshold ? 'down' : 'up';
     } else {
       // Earth bead: active ('up') ONLY when very close to bar (>80% of range toward bar)
-      const minY = 101 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar + 1;
-      const maxY = 264 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar;
+      const minY = 121 + beadHeight / 2 + gap; // 140 - active (up)
+      const maxY = 284 - beadHeight / 2 - gap; // 265 - inactive (down)
       const range = maxY - minY;
       const activeThreshold = maxY - 0.8 * range; // Active ONLY if moved 80%+ toward bar
       beadRef.position = currentY < activeThreshold ? 'up' : 'down';
@@ -149,23 +150,20 @@ export class AbacusPhysics {
    * @returns {Object} - {min, max}
    */
   getYConstraints(col, type, index) {
-    const barY = this.abacus.config.barY;
     const beadHeight = this.abacus.config.beadHeight;
-    const gapFromBar = this.abacus.config.gapFromBar;
+    const gap = 1; // 1px gap from bars/frames
 
     if (type === 'heaven') {
-      // Heaven bead can move between top frame and bar
-      // Stop 1px before bar (91 is bar top, so max should be bar top - beadHeight/2 - gap - 1)
+      // Heaven bead moves between top frame (bottom at y=60) and middle bar (top at y=111)
       return {
-        min: 40 + beadHeight / 2 + gapFromBar,
-        max: 91 - beadHeight / 2 - gapFromBar - 1
+        min: 60 + beadHeight / 2 + gap,   // 60 + 18 + 1 = 79
+        max: 111 - beadHeight / 2 - gap   // 111 - 18 - 1 = 92
       };
     } else {
-      // Earth bead can move between bar and bottom frame
-      // Start 1px after bar (101 is bar bottom)
+      // Earth beads move between middle bar (bottom at y=121) and bottom frame (top at y=284)
       return {
-        min: 101 + beadHeight / 2 + gapFromBar + 1,
-        max: 264 - beadHeight / 2 - gapFromBar
+        min: 121 + beadHeight / 2 + gap,  // 121 + 18 + 1 = 140
+        max: 284 - beadHeight / 2 - gap   // 284 - 18 - 1 = 265
       };
     }
   }
