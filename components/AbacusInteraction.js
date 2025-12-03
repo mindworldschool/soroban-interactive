@@ -167,7 +167,7 @@ export class AbacusInteraction {
   updateEarthBeadWithCollision(col, draggedIndex, desiredY) {
     const beads = this.abacus.beads[col].earth;
     const beadHeight = this.abacus.config.beadHeight;
-    const minGap = 1; // Minimum gap between beads
+    const minGap = 0; // No gap - beads touch each other
 
     const currentY = beads[draggedIndex].y;
     const movingUp = desiredY < currentY;
@@ -187,7 +187,7 @@ export class AbacusInteraction {
         const beadAbove = beads[draggedIndex - 1];
         const maxAllowedY = beadAbove.y - beadHeight - minGap;
 
-        if (newY < maxAllowedY) {
+        if (newY <= maxAllowedY) {
           // No collision, move freely
           beads[draggedIndex].y = newY;
           if (this.abacus.renderer) {
@@ -195,7 +195,6 @@ export class AbacusInteraction {
           }
         } else {
           // Collision - push beads above
-          const pushAmount = beadAbove.y - beadHeight - minGap - newY;
           this.pushBeadsUp(col, draggedIndex, newY);
         }
       } else {
@@ -214,7 +213,7 @@ export class AbacusInteraction {
         const beadBelow = beads[draggedIndex + 1];
         const minAllowedY = beadBelow.y + beadHeight + minGap;
 
-        if (newY > minAllowedY) {
+        if (newY >= minAllowedY) {
           // No collision, move freely
           beads[draggedIndex].y = newY;
           if (this.abacus.renderer) {
@@ -243,7 +242,7 @@ export class AbacusInteraction {
   pushBeadsUp(col, startIndex, newY) {
     const beads = this.abacus.beads[col].earth;
     const beadHeight = this.abacus.config.beadHeight;
-    const minGap = 1;
+    const minGap = 0; // Beads touch each other
 
     const barBottom = 101;
     const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
@@ -285,7 +284,7 @@ export class AbacusInteraction {
   pushBeadsDown(col, startIndex, newY) {
     const beads = this.abacus.beads[col].earth;
     const beadHeight = this.abacus.config.beadHeight;
-    const minGap = 1;
+    const minGap = 0; // Beads touch each other
 
     const bottomFrame = 264;
     const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
