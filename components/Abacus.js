@@ -79,7 +79,18 @@ export class Abacus {
    * Render the abacus
    */
   render() {
-    const width = this.digitCount * 72 + 40;
+    // Проверяем ширину контейнера и адаптируем количество разрядов
+    const containerWidth = this.container.clientWidth || 1200; // Дефолт если не определена
+    const COLUMN_WIDTH = 72; // Ширина одного разряда
+    const PADDING = 40; // Отступы слева и справа
+
+    // Вычисляем максимальное количество разрядов, которое влезает
+    const maxVisibleDigits = Math.floor((containerWidth - PADDING) / COLUMN_WIDTH);
+
+    // Используем минимум из запрошенного и доступного (без обрезания)
+    this.columns = Math.min(this.digitCount, maxVisibleDigits);
+
+    const width = this.columns * COLUMN_WIDTH + PADDING;
 
     this.container.innerHTML = `
       <svg id="abacus-svg" width="${width}" height="340" style="user-select: none;">
@@ -100,6 +111,11 @@ export class Abacus {
     // Update SVG reference in interaction module after re-render
     if (this.interaction && this.svgElement) {
       this.interaction.updateSvgReference(this.svgElement);
+    }
+
+    // Логируем если пришлось урезать разряды
+    if (this.columns < this.digitCount) {
+      logger.debug(CONTEXT, `Adjusted visible digits from ${this.digitCount} to ${this.columns} to fit container width ${containerWidth}px`);
     }
   }
 
@@ -165,7 +181,7 @@ export class Abacus {
    * Render abacus frame
    */
   renderFrame() {
-    const width = this.digitCount * 72 + 20;
+    const width = this.columns * 72 + 20;
     return `
       <!-- Top frame -->
       <rect x="10" y="30" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="5"/>
@@ -182,7 +198,7 @@ export class Abacus {
    */
   renderRods() {
     let rods = '';
-    for (let col = 0; col < this.digitCount; col++) {
+    for (let col = 0; col < this.columns; col++) {
       const x = 50 + col * 72;
       rods += `<line x1="${x}" y1="60" x2="${x}" y2="284" stroke="#654321" stroke-width="8"/>`;
     }
@@ -193,7 +209,7 @@ export class Abacus {
    * Render middle separator bar
    */
   renderMiddleBar() {
-    const width = this.digitCount * 72 + 20;
+    const width = this.columns * 72 + 20;
     return `
       <rect x="10" y="111" width="${width}" height="10" fill="url(#metalBarGradient)" rx="2"/>
       <rect x="15" y="112" width="${width - 10}" height="2" fill="rgba(255, 255, 255, 0.6)" rx="1"/>
@@ -207,7 +223,7 @@ export class Abacus {
   renderBeads() {
     let beadsHTML = '';
 
-    for (let col = 0; col < this.digitCount; col++) {
+    for (let col = 0; col < this.columns; col++) {
       const x = 50 + col * 72;
       const beadHeight = this.config.beadHeight;
       const beadWidth = this.config.beadWidth;
@@ -262,8 +278,8 @@ export class Abacus {
    */
   renderDigits() {
     let digitsHTML = '<g class="digits">';
-    
-    for (let col = 0; col < this.digitCount; col++) {
+
+    for (let col = 0; col < this.columns; col++) {
       const x = 50 + col * 72;
       const value = this.getColumnValue(col);
       
