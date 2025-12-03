@@ -16,7 +16,7 @@ export class Config {
       beadWidth: 32,
       beadHeight: 36,
       gapFromBar: 1,
-      barY: 96,
+      barY: 116,
       snapDistance: 15,
       animationDuration: 150
     };
