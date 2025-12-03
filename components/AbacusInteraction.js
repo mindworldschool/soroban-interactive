@@ -370,28 +370,46 @@ export class AbacusInteraction {
     const beadWidth = this.abacus.config.beadWidth;
     const beadHeight = this.abacus.config.beadHeight;
 
-    // Use larger hit area for better UX (add 10px padding)
-    const hitRadius = beadWidth + 10;
+    // Use exact bead boundaries for precise grabbing (reduced from beadWidth + 10)
+    const hitRadiusX = beadWidth - 2; // Slightly smaller than actual width
+    const hitRadiusY = beadHeight / 2 - 2; // Slightly smaller than actual height
 
     for (let col = 0; col < this.abacus.digitCount; col++) {
       const rodX = 50 + col * 72;
 
       // Check heaven bead
       const heavenY = this.abacus.beads[col].heaven.y;
-      if (isPointInCircle(x, y, rodX, heavenY, hitRadius)) {
+      if (this.isPointInBead(x, y, rodX, heavenY, hitRadiusX, hitRadiusY)) {
         return { col, type: 'heaven', index: 0 };
       }
 
       // Check earth beads (iterate backwards so top beads are checked first)
       for (let i = 3; i >= 0; i--) {
         const earthY = this.abacus.beads[col].earth[i].y;
-        if (isPointInCircle(x, y, rodX, earthY, hitRadius)) {
+        if (this.isPointInBead(x, y, rodX, earthY, hitRadiusX, hitRadiusY)) {
           return { col, type: 'earth', index: i };
         }
       }
     }
 
     return null;
+  }
+
+  /**
+   * Check if point is within bead boundaries (ellipse shape)
+   * @param {number} px - Point X
+   * @param {number} py - Point Y
+   * @param {number} beadX - Bead center X
+   * @param {number} beadY - Bead center Y
+   * @param {number} radiusX - Horizontal radius
+   * @param {number} radiusY - Vertical radius
+   * @returns {boolean}
+   */
+  isPointInBead(px, py, beadX, beadY, radiusX, radiusY) {
+    // Ellipse equation: (x-cx)²/rx² + (y-cy)²/ry² <= 1
+    const dx = px - beadX;
+    const dy = py - beadY;
+    return (dx * dx) / (radiusX * radiusX) + (dy * dy) / (radiusY * radiusY) <= 1;
   }
 
   /**
