@@ -36,19 +36,19 @@ export class AbacusPhysics {
     const beadHeight = this.abacus.config.beadHeight;
     const gap = 1;
 
-    // Determine position based on current Y coordinate
+    // Determine position based on distance from middle bar
+    const ACTIVATION_DISTANCE = 30; // Косточка активна если в пределах 30px от средней планки
+
     if (type === 'heaven') {
-      // Heaven bead: опущена (down) если ниже середины → даёт 5, поднята (up) если выше → даёт 0
-      const minY = 60 + beadHeight / 2 + gap;  // 79 - inactive (up)
-      const maxY = 111 - beadHeight / 2 - gap; // 92 - active (down)
-      const middle = (minY + maxY) / 2; // 85.5 - threshold
-      beadRef.position = currentY > middle ? 'down' : 'up';
+      // Heaven bead: опущена (down) если близко к планке (ниже y=111) → даёт 5
+      const barTop = 111;
+      const threshold = barTop - ACTIVATION_DISTANCE; // 81
+      beadRef.position = currentY > threshold ? 'down' : 'up';
     } else {
-      // Earth bead: поднята (up) если выше середины → даёт 1, опущена (down) если ниже → даёт 0
-      const minY = 121 + beadHeight / 2 + gap; // 140 - active (up)
-      const maxY = 284 - beadHeight / 2 - gap; // 265 - inactive (down)
-      const middle = (minY + maxY) / 2; // 202.5 - threshold
-      beadRef.position = currentY < middle ? 'up' : 'down';
+      // Earth bead: поднята (up) если близко к планке (выше y=121) → даёт 1
+      const barBottom = 121;
+      const threshold = barBottom + ACTIVATION_DISTANCE; // 151
+      beadRef.position = currentY < threshold ? 'up' : 'down';
     }
 
     beadRef.isDragging = false;

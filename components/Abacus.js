@@ -51,6 +51,9 @@ export class Abacus {
     const beadHeight = this.config.beadHeight;
     const gap = this.config.gapFromBar;
 
+    // Начальные позиции - компактная группа внизу
+    const bottomY = 284 - beadHeight / 2 - gap; // 265 - самая нижняя у нижней рамки
+
     for (let col = 0; col < this.digitCount; col++) {
       this.beads[col] = {
         heaven: {
@@ -59,11 +62,11 @@ export class Abacus {
           isDragging: false
         },
         earth: [
-          // Все косточки внизу, равномерно распределены ниже порога 202.5
-          { position: 'down', y: 210, isDragging: false },
-          { position: 'down', y: 225, isDragging: false },
-          { position: 'down', y: 240, isDragging: false },
-          { position: 'down', y: 255, isDragging: false }
+          // Косточки компактной группой внизу (впритык друг к другу, расстояние = beadHeight)
+          { position: 'down', y: bottomY - 3 * beadHeight, isDragging: false }, // 157
+          { position: 'down', y: bottomY - 2 * beadHeight, isDragging: false }, // 193
+          { position: 'down', y: bottomY - 1 * beadHeight, isDragging: false }, // 229
+          { position: 'down', y: bottomY - 0 * beadHeight, isDragging: false }  // 265
         ]
       };
     }
