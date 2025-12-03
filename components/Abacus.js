@@ -48,18 +48,22 @@ export class Abacus {
    */
   init() {
     // Initialize all beads to starting position
+    const beadHeight = this.config.beadHeight;
+    const gap = this.config.gapFromBar;
+
     for (let col = 0; col < this.digitCount; col++) {
       this.beads[col] = {
         heaven: {
           position: 'up', // 'up' | 'down'
-          y: 60 + this.config.beadHeight / 2 + this.config.gapFromBar,
+          y: 60 + beadHeight / 2 + gap,  // 79
           isDragging: false
         },
         earth: [
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 3 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 2 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 1 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 0 * this.config.beadHeight, isDragging: false }
+          // Все косточки внизу, равномерно распределены ниже порога 202.5
+          { position: 'down', y: 210, isDragging: false },
+          { position: 'down', y: 225, isDragging: false },
+          { position: 'down', y: 240, isDragging: false },
+          { position: 'down', y: 255, isDragging: false }
         ]
       };
     }
