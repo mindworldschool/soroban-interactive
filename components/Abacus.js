@@ -259,7 +259,7 @@ export class Abacus {
       const value = this.getColumnValue(col);
       
       digitsHTML += `
-        <text x="${x}" y="25"
+        <text x="${x}" y="15"
           text-anchor="middle"
           font-family="Montserrat, sans-serif"
           font-size="20"
