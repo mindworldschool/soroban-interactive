@@ -316,6 +316,8 @@ export class Abacus {
    */
   setValue(value) {
     const digits = String(value).padStart(this.digitCount, '0').split('');
+    const beadHeight = this.config.beadHeight;
+    const gap = 1;
 
     digits.forEach((digit, index) => {
       const num = parseInt(digit, 10);
@@ -323,31 +325,31 @@ export class Abacus {
       // Decompose into 5*U + L
       if (num >= 5) {
         this.beads[index].heaven.position = 'down';
-        this.beads[index].heaven.y = this.config.barY - this.config.beadHeight / 2 - this.config.gapFromBar;
-        
+        this.beads[index].heaven.y = 111 - beadHeight / 2 - gap;  // 92 - active position near middle bar
+
         const remainder = num - 5;
         for (let i = 0; i < 4; i++) {
           if (i < remainder) {
             this.beads[index].earth[i].position = 'up';
-            this.beads[index].earth[i].y = 101 + this.config.beadHeight / 2 + this.config.gapFromBar + i * this.config.beadHeight;
+            this.beads[index].earth[i].y = 121 + beadHeight / 2 + gap + i * beadHeight;  // 140 + i*36
           } else {
             this.beads[index].earth[i].position = 'down';
             const downIndex = 3 - i;
-            this.beads[index].earth[i].y = 264 - this.config.beadHeight / 2 - this.config.gapFromBar - downIndex * this.config.beadHeight;
+            this.beads[index].earth[i].y = 284 - beadHeight / 2 - gap - downIndex * beadHeight;  // 265 - downIndex*36
           }
         }
       } else {
         this.beads[index].heaven.position = 'up';
-        this.beads[index].heaven.y = 40 + this.config.beadHeight / 2 + this.config.gapFromBar;
-        
+        this.beads[index].heaven.y = 60 + beadHeight / 2 + gap;  // 79 - inactive position below top frame
+
         for (let i = 0; i < 4; i++) {
           if (i < num) {
             this.beads[index].earth[i].position = 'up';
-            this.beads[index].earth[i].y = 101 + this.config.beadHeight / 2 + this.config.gapFromBar + i * this.config.beadHeight;
+            this.beads[index].earth[i].y = 121 + beadHeight / 2 + gap + i * beadHeight;  // 140 + i*36
           } else {
             this.beads[index].earth[i].position = 'down';
             const downIndex = 3 - i;
-            this.beads[index].earth[i].y = 264 - this.config.beadHeight / 2 - this.config.gapFromBar - downIndex * this.config.beadHeight;
+            this.beads[index].earth[i].y = 284 - beadHeight / 2 - gap - downIndex * beadHeight;  // 265 - downIndex*36
           }
         }
       }
