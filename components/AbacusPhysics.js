@@ -37,13 +37,19 @@ export class AbacusPhysics {
 
     // Determine position based on current Y coordinate
     if (type === 'heaven') {
-      // Heaven bead: if closer to bar = 'down' (active), otherwise 'up' (inactive)
-      const midPoint = (40 + this.abacus.config.beadHeight / 2 + 91 - this.abacus.config.beadHeight / 2) / 2;
-      beadRef.position = currentY > midPoint ? 'down' : 'up';
+      // Heaven bead: active ('down') if in bottom 1/3 of range (close to bar)
+      const minY = 40 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar;
+      const maxY = 91 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar - 1;
+      const range = maxY - minY;
+      const activeThreshold = maxY - range / 3;
+      beadRef.position = currentY > activeThreshold ? 'down' : 'up';
     } else {
-      // Earth bead: if closer to bar = 'up' (active), otherwise 'down' (inactive)
-      const midPoint = (101 + this.abacus.config.beadHeight / 2 + 264 - this.abacus.config.beadHeight / 2) / 2;
-      beadRef.position = currentY < midPoint ? 'up' : 'down';
+      // Earth bead: active ('up') if in top 1/3 of range (close to bar)
+      const minY = 101 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar + 1;
+      const maxY = 264 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar;
+      const range = maxY - minY;
+      const activeThreshold = minY + range / 3;
+      beadRef.position = currentY < activeThreshold ? 'up' : 'down';
     }
 
     beadRef.isDragging = false;
