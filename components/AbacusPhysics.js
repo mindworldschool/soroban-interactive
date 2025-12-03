@@ -36,19 +36,40 @@ export class AbacusPhysics {
     const beadHeight = this.abacus.config.beadHeight;
     const gap = 1;
 
-    // Determine position based on distance from middle bar
-    const ACTIVATION_DISTANCE = 30; // Косточка активна если в пределах 30px от средней планки
-
+    // Determine position based on compact group at bottom
     if (type === 'heaven') {
       // Heaven bead: опущена (down) если близко к планке (ниже y=111) → даёт 5
       const barTop = 111;
+      const ACTIVATION_DISTANCE = 30;
       const threshold = barTop - ACTIVATION_DISTANCE; // 81
       beadRef.position = currentY > threshold ? 'down' : 'up';
     } else {
-      // Earth bead: поднята (up) если близко к планке (выше y=121) → даёт 1
-      const barBottom = 121;
-      const threshold = barBottom + ACTIVATION_DISTANCE; // 151
-      beadRef.position = currentY < threshold ? 'up' : 'down';
+      // Earth beads: считаем сколько косточек в компактной группе у нижней рамки
+      // Проверяем снизу вверх - косточки в компактной группе у низа = неактивны
+      const beads = this.abacus.beads[col].earth;
+      const bottomY = 284 - beadHeight / 2 - gap; // 265 - позиция у нижней рамки
+      const TOLERANCE = 5; // допуск для определения компактной группы
+
+      let inactiveCount = 0;
+      let expectedY = bottomY;
+
+      // Проверяем снизу вверх (от earth[3] к earth[0])
+      for (let i = 3; i >= 0; i--) {
+        if (Math.abs(beads[i].y - expectedY) < TOLERANCE) {
+          // Косточка на ожидаемой позиции в нижней группе - неактивна
+          beads[i].position = 'down';
+          inactiveCount++;
+          expectedY = expectedY - beadHeight; // следующая ожидаемая позиция выше
+        } else {
+          // Разрыв найден - все косточки выше активны
+          break;
+        }
+      }
+
+      // Все косточки выше компактной группы внизу - активны
+      for (let i = 0; i < 4 - inactiveCount; i++) {
+        beads[i].position = 'up';
+      }
     }
 
     beadRef.isDragging = false;
