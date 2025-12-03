@@ -146,22 +146,22 @@ export class AbacusInteraction {
       }
 
       // Update position based on current Y for real-time digit update
-      // Heaven bead is active (down) if in bottom 1/3 of range (close to bar)
+      // Heaven bead is active (down) only when moved significantly toward bar (>60% of range)
       const minY = 40 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar;
       const maxY = 91 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar - 1;
       const range = maxY - minY;
-      const activeThreshold = maxY - range / 3;
+      const activeThreshold = minY + 0.4 * range; // Active if moved more than 40% toward bar
       this.abacus.beads[col].heaven.position = clampedY > activeThreshold ? 'down' : 'up';
     } else {
       // Earth beads - handle collision and group movement
       this.updateEarthBeadWithCollision(col, index, desiredY);
 
       // Update positions for all earth beads based on current Y
-      // Earth bead is active (up) if in top 1/3 of range (close to bar)
+      // Earth bead is active (up) only when moved significantly toward bar (>60% of range)
       const minY = 101 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar + 1;
       const maxY = 264 - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar;
       const range = maxY - minY;
-      const activeThreshold = minY + range / 3;
+      const activeThreshold = maxY - 0.4 * range; // Active if moved more than 40% toward bar
       this.abacus.beads[col].earth.forEach(bead => {
         bead.position = bead.y < activeThreshold ? 'up' : 'down';
       });
