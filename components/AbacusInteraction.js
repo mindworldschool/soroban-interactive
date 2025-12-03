@@ -16,14 +16,17 @@ export class AbacusInteraction {
   constructor(abacus, svgElement) {
     this.abacus = abacus;
     this.svg = svgElement;
-    
+
     this.isDragging = false;
     this.draggedBead = null; // { col, type, index }
     this.dragStartY = 0;
     this.beadStartY = 0;
-    
+
     this.isTouchDevice = isTouchDevice();
-    
+
+    // Offset for transformed group (abacus elements are in a group with translate(0, 40))
+    this.groupOffsetY = 40;
+
     this.initEvents();
     logger.debug(CONTEXT, `Interaction initialized (touch: ${this.isTouchDevice})`);
   }
@@ -52,7 +55,7 @@ export class AbacusInteraction {
   onMouseDown(e) {
     e.preventDefault();
     const { x, y } = screenToSVG(this.svg, e.clientX, e.clientY);
-    const bead = this.getBeadAtPosition(x, y);
+    const bead = this.getBeadAtPosition(x, y - this.groupOffsetY);
 
     if (bead) {
       this.startDrag(bead, e.clientX, e.clientY);
@@ -67,7 +70,7 @@ export class AbacusInteraction {
     e.preventDefault();
     const touch = e.touches[0];
     const { x, y } = screenToSVG(this.svg, touch.clientX, touch.clientY);
-    const bead = this.getBeadAtPosition(x, y);
+    const bead = this.getBeadAtPosition(x, y - this.groupOffsetY);
 
     if (bead) {
       this.startDrag(bead, touch.clientX, touch.clientY);
@@ -84,9 +87,9 @@ export class AbacusInteraction {
     this.isDragging = true;
     this.draggedBead = bead;
 
-    // Convert to SVG coordinates
+    // Convert to SVG coordinates and adjust for group offset
     const svgCoords = screenToSVG(this.svg, clientX, clientY);
-    this.dragStartY = svgCoords.y;
+    this.dragStartY = svgCoords.y - this.groupOffsetY;
 
     const beadData = bead.type === 'heaven'
       ? this.abacus.beads[bead.col].heaven
@@ -126,9 +129,10 @@ export class AbacusInteraction {
    * @param {number} clientY - Current Y position (screen)
    */
   updateDrag(clientX, clientY) {
-    // Convert to SVG coordinates
+    // Convert to SVG coordinates and adjust for group offset
     const svgCoords = screenToSVG(this.svg, clientX, clientY);
-    const deltaY = svgCoords.y - this.dragStartY;
+    const adjustedY = svgCoords.y - this.groupOffsetY;
+    const deltaY = adjustedY - this.dragStartY;
     const desiredY = this.beadStartY + deltaY;
 
     const col = this.draggedBead.col;
