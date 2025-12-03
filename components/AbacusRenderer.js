@@ -153,7 +153,7 @@ export class AbacusRenderer {
       // Create text element with proper SVG namespace
       const textElement = document.createElementNS(SVG_NS, 'text');
       textElement.setAttribute('x', x);
-      textElement.setAttribute('y', '15');
+      textElement.setAttribute('y', '8');
       textElement.setAttribute('text-anchor', 'middle');
       textElement.setAttribute('font-family', 'Montserrat, sans-serif');
       textElement.setAttribute('font-size', '20');
