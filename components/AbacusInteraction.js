@@ -223,36 +223,31 @@ export class AbacusInteraction {
     const barBottom = 101;
     const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
 
-    // Find which beads need to move (only touching beads)
+    // Start with dragged bead position
+    const positions = {};
+    positions[startIndex] = Math.max(minY, newY);
+
+    // Find which beads need to move by checking from NEW position of dragged bead
     const beadsToMove = [startIndex];
 
-    // Check beads above that are touching
+    // Check beads above - calculate expected position based on dragged bead's NEW position
     for (let i = startIndex - 1; i >= 0; i--) {
-      const beadBelow = beads[i + 1];
-      const expectedTouchY = beadBelow.y - beadHeight - minGap;
+      const beadBelowNewY = i === startIndex - 1 ? positions[startIndex] : positions[i + 1];
+      const expectedTouchY = beadBelowNewY - beadHeight - minGap;
 
-      // Only include if bead is touching the one below it
-      if (Math.abs(beads[i].y - expectedTouchY) < 1) {
+      // Only include if bead is currently touching or would collide
+      if (beads[i].y >= expectedTouchY - 1) {
         beadsToMove.unshift(i);
+        positions[i] = expectedTouchY;
       } else {
         break; // Stop if gap found
       }
     }
 
-    // Calculate new positions
-    const topIndex = beadsToMove[0];
-    const positions = {};
-
-    positions[startIndex] = newY;
-
-    // Calculate positions upward
-    for (let i = startIndex - 1; i >= topIndex; i--) {
-      positions[i] = positions[i + 1] - beadHeight - minGap;
-    }
-
     // Check if top bead would go beyond limit
+    const topIndex = beadsToMove[0];
     if (positions[topIndex] < minY) {
-      // Limit hit - recalculate from top
+      // Limit hit - recalculate from top down
       positions[topIndex] = minY;
       for (let i = topIndex + 1; i <= startIndex; i++) {
         positions[i] = positions[i - 1] + beadHeight + minGap;
@@ -282,36 +277,31 @@ export class AbacusInteraction {
     const bottomFrame = 264;
     const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
 
-    // Find which beads need to move (only touching beads)
+    // Start with dragged bead position
+    const positions = {};
+    positions[startIndex] = Math.min(maxY, newY);
+
+    // Find which beads need to move by checking from NEW position of dragged bead
     const beadsToMove = [startIndex];
 
-    // Check beads below that are touching
+    // Check beads below - calculate expected position based on dragged bead's NEW position
     for (let i = startIndex + 1; i < 4; i++) {
-      const beadAbove = beads[i - 1];
-      const expectedTouchY = beadAbove.y + beadHeight + minGap;
+      const beadAboveNewY = i === startIndex + 1 ? positions[startIndex] : positions[i - 1];
+      const expectedTouchY = beadAboveNewY + beadHeight + minGap;
 
-      // Only include if bead is touching the one above it
-      if (Math.abs(beads[i].y - expectedTouchY) < 1) {
+      // Only include if bead is currently touching or would collide
+      if (beads[i].y <= expectedTouchY + 1) {
         beadsToMove.push(i);
+        positions[i] = expectedTouchY;
       } else {
         break; // Stop if gap found
       }
     }
 
-    // Calculate new positions
-    const bottomIndex = beadsToMove[beadsToMove.length - 1];
-    const positions = {};
-
-    positions[startIndex] = newY;
-
-    // Calculate positions downward
-    for (let i = startIndex + 1; i <= bottomIndex; i++) {
-      positions[i] = positions[i - 1] + beadHeight + minGap;
-    }
-
     // Check if bottom bead would go beyond limit
+    const bottomIndex = beadsToMove[beadsToMove.length - 1];
     if (positions[bottomIndex] > maxY) {
-      // Limit hit - recalculate from bottom
+      // Limit hit - recalculate from bottom up
       positions[bottomIndex] = maxY;
       for (let i = bottomIndex - 1; i >= startIndex; i--) {
         positions[i] = positions[i + 1] - beadHeight - minGap;
