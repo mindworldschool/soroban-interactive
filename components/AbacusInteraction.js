@@ -58,9 +58,9 @@ export class AbacusInteraction {
     e.preventDefault();
     const { x, y } = screenToSVG(this.svg, e.clientX, e.clientY);
     const bead = this.getBeadAtPosition(x, y);
-    
+
     if (bead) {
-      this.startDrag(bead, e.clientY);
+      this.startDrag(bead, e.clientX, e.clientY);
     }
   }
 
@@ -73,34 +73,38 @@ export class AbacusInteraction {
     const touch = e.touches[0];
     const { x, y } = screenToSVG(this.svg, touch.clientX, touch.clientY);
     const bead = this.getBeadAtPosition(x, y);
-    
+
     if (bead) {
-      this.startDrag(bead, touch.clientY);
+      this.startDrag(bead, touch.clientX, touch.clientY);
     }
   }
 
   /**
    * Start dragging a bead
    * @param {Object} bead - { col, type, index }
-   * @param {number} clientY - Starting Y position
+   * @param {number} clientX - Starting X position (screen)
+   * @param {number} clientY - Starting Y position (screen)
    */
-  startDrag(bead, clientY) {
+  startDrag(bead, clientX, clientY) {
     this.isDragging = true;
     this.draggedBead = bead;
-    this.dragStartY = clientY;
-    
+
+    // Convert to SVG coordinates
+    const svgCoords = screenToSVG(this.svg, clientX, clientY);
+    this.dragStartY = svgCoords.y;
+
     const beadData = bead.type === 'heaven'
       ? this.abacus.beads[bead.col].heaven
       : this.abacus.beads[bead.col].earth[bead.index];
-    
+
     this.beadStartY = beadData.y;
     beadData.isDragging = true;
-    
+
     // Visual feedback
     if (this.abacus.renderer) {
       this.abacus.renderer.setBeadDragging(bead.col, bead.type, bead.index, true);
     }
-    
+
     logger.debug(CONTEXT, `Started dragging: col=${bead.col}, type=${bead.type}, index=${bead.index}`);
   }
 
@@ -110,8 +114,8 @@ export class AbacusInteraction {
    */
   onMouseMove(e) {
     if (!this.isDragging) return;
-    
-    this.updateDrag(e.clientY);
+
+    this.updateDrag(e.clientX, e.clientY);
   }
 
   /**
@@ -121,36 +125,39 @@ export class AbacusInteraction {
   onTouchMove(e) {
     if (!this.isDragging) return;
     e.preventDefault();
-    
+
     const touch = e.touches[0];
-    this.updateDrag(touch.clientY);
+    this.updateDrag(touch.clientX, touch.clientY);
   }
 
   /**
    * Update bead position during drag
-   * @param {number} clientY - Current Y position
+   * @param {number} clientX - Current X position (screen)
+   * @param {number} clientY - Current Y position (screen)
    */
-  updateDrag(clientY) {
-    const deltaY = clientY - this.dragStartY;
+  updateDrag(clientX, clientY) {
+    // Convert to SVG coordinates
+    const svgCoords = screenToSVG(this.svg, clientX, clientY);
+    const deltaY = svgCoords.y - this.dragStartY;
     const newY = this.beadStartY + deltaY;
-    
+
     // Get constraints
     const constraints = this.abacus.physics.getYConstraints(
       this.draggedBead.col,
       this.draggedBead.type,
       this.draggedBead.index
     );
-    
+
     // Clamp Y within constraints
     const clampedY = Math.max(constraints.min, Math.min(constraints.max, newY));
-    
+
     // Update bead position
     const beadData = this.draggedBead.type === 'heaven'
       ? this.abacus.beads[this.draggedBead.col].heaven
       : this.abacus.beads[this.draggedBead.col].earth[this.draggedBead.index];
-    
+
     beadData.y = clampedY;
-    
+
     // Update visual
     if (this.abacus.renderer) {
       this.abacus.renderer.updateBeadPosition(
@@ -160,7 +167,7 @@ export class AbacusInteraction {
         clampedY
       );
     }
-    
+
     // Trigger onBeadMove event
     this.abacus.triggerEvent('onBeadMove', {
       col: this.draggedBead.col,
