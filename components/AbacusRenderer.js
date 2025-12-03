@@ -141,31 +141,30 @@ export class AbacusRenderer {
       oldDigits.remove();
     }
 
-    // Add new digits
-    let digitsHTML = '<g class="digits">';
-    
+    // Create new digits group using proper SVG namespace
+    const SVG_NS = 'http://www.w3.org/2000/svg';
+    const digitsGroup = document.createElementNS(SVG_NS, 'g');
+    digitsGroup.setAttribute('class', 'digits');
+
     for (let col = 0; col < this.abacus.digitCount; col++) {
       const x = 50 + col * 72;
       const value = this.abacus.getColumnValue(col);
-      
-      digitsHTML += `
-        <text x="${x}" y="25"
-          text-anchor="middle"
-          font-family="Montserrat, sans-serif"
-          font-size="18"
-          font-weight="600"
-          fill="#ff8c42">
-          ${value}
-        </text>
-      `;
-    }
-    
-    digitsHTML += '</g>';
 
-    // Insert new digits
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = digitsHTML;
-    const digitsGroup = tempDiv.firstChild;
+      // Create text element with proper SVG namespace
+      const textElement = document.createElementNS(SVG_NS, 'text');
+      textElement.setAttribute('x', x);
+      textElement.setAttribute('y', '15');
+      textElement.setAttribute('text-anchor', 'middle');
+      textElement.setAttribute('font-family', 'Montserrat, sans-serif');
+      textElement.setAttribute('font-size', '20');
+      textElement.setAttribute('font-weight', '700');
+      textElement.setAttribute('fill', '#4a4a4a');
+      textElement.textContent = value;
+
+      digitsGroup.appendChild(textElement);
+    }
+
+    // Insert new digits group
     svg.appendChild(digitsGroup);
   }
 
