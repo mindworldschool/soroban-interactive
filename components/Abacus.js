@@ -27,7 +27,7 @@ export class Abacus {
       beadWidth: 32,
       beadHeight: 36,
       gapFromBar: 1,
-      barY: 96 // Middle bar Y position
+      barY: 116 // Middle bar Y position
     };
 
     // Event callbacks
@@ -52,14 +52,14 @@ export class Abacus {
       this.beads[col] = {
         heaven: {
           position: 'up', // 'up' | 'down'
-          y: 40 + this.config.beadHeight / 2 + this.config.gapFromBar,
+          y: 60 + this.config.beadHeight / 2 + this.config.gapFromBar,
           isDragging: false
         },
         earth: [
-          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 3 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 2 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 1 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 264 - this.config.beadHeight / 2 - this.config.gapFromBar - 0 * this.config.beadHeight, isDragging: false }
+          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 3 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 2 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 1 * this.config.beadHeight, isDragging: false },
+          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 0 * this.config.beadHeight, isDragging: false }
         ]
       };
     }
@@ -159,12 +159,12 @@ export class Abacus {
     const width = this.digitCount * 72 + 20;
     return `
       <!-- Top frame -->
-      <rect x="10" y="10" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="5"/>
-      <rect x="15" y="13" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
+      <rect x="10" y="30" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="5"/>
+      <rect x="15" y="33" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
 
       <!-- Bottom frame -->
-      <rect x="10" y="264" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="5"/>
-      <rect x="15" y="267" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
+      <rect x="10" y="284" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="5"/>
+      <rect x="15" y="287" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
     `;
   }
 
@@ -175,7 +175,7 @@ export class Abacus {
     let rods = '';
     for (let col = 0; col < this.digitCount; col++) {
       const x = 50 + col * 72;
-      rods += `<line x1="${x}" y1="40" x2="${x}" y2="264" stroke="#654321" stroke-width="8"/>`;
+      rods += `<line x1="${x}" y1="60" x2="${x}" y2="284" stroke="#654321" stroke-width="8"/>`;
     }
     return rods;
   }
@@ -186,9 +186,9 @@ export class Abacus {
   renderMiddleBar() {
     const width = this.digitCount * 72 + 20;
     return `
-      <rect x="10" y="91" width="${width}" height="10" fill="url(#metalBarGradient)" rx="2"/>
-      <rect x="15" y="92" width="${width - 10}" height="2" fill="rgba(255, 255, 255, 0.6)" rx="1"/>
-      <rect x="10" y="101" width="${width}" height="2" fill="rgba(0, 0, 0, 0.3)" rx="1"/>
+      <rect x="10" y="111" width="${width}" height="10" fill="url(#metalBarGradient)" rx="2"/>
+      <rect x="15" y="112" width="${width - 10}" height="2" fill="rgba(255, 255, 255, 0.6)" rx="1"/>
+      <rect x="10" y="121" width="${width}" height="2" fill="rgba(0, 0, 0, 0.3)" rx="1"/>
     `;
   }
 
@@ -259,7 +259,7 @@ export class Abacus {
       const value = this.getColumnValue(col);
       
       digitsHTML += `
-        <text x="${x}" y="5"
+        <text x="${x}" y="40"
           text-anchor="middle"
           font-family="Montserrat, sans-serif"
           font-size="20"
