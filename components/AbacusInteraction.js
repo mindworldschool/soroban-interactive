@@ -144,9 +144,24 @@ export class AbacusInteraction {
       if (this.abacus.renderer) {
         this.abacus.renderer.updateBeadPosition(col, type, index, clampedY);
       }
+
+      // Update position based on current Y for real-time digit update
+      const midPoint = (40 + this.abacus.config.beadHeight / 2 + 91 - this.abacus.config.beadHeight / 2) / 2;
+      this.abacus.beads[col].heaven.position = clampedY > midPoint ? 'down' : 'up';
     } else {
       // Earth beads - handle collision and group movement
       this.updateEarthBeadWithCollision(col, index, desiredY);
+
+      // Update positions for all earth beads based on current Y
+      const midPoint = (101 + this.abacus.config.beadHeight / 2 + 264 - this.abacus.config.beadHeight / 2) / 2;
+      this.abacus.beads[col].earth.forEach(bead => {
+        bead.position = bead.y < midPoint ? 'up' : 'down';
+      });
+    }
+
+    // Update digit display in real-time
+    if (this.abacus.config.showDigits && this.abacus.renderer) {
+      this.abacus.renderer.updateDigits();
     }
 
     // Trigger onBeadMove event

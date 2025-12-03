@@ -149,11 +149,11 @@ export class AbacusRenderer {
       const value = this.abacus.getColumnValue(col);
       
       digitsHTML += `
-        <text x="${x}" y="285" 
-          text-anchor="middle" 
-          font-family="Montserrat, sans-serif" 
-          font-size="18" 
-          font-weight="600" 
+        <text x="${x}" y="25"
+          text-anchor="middle"
+          font-family="Montserrat, sans-serif"
+          font-size="18"
+          font-weight="600"
           fill="#ff8c42">
           ${value}
         </text>
