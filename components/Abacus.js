@@ -87,6 +87,11 @@ export class Abacus {
 
     // Store reference to SVG element
     this.svgElement = this.container.querySelector('#abacus-svg');
+
+    // Update SVG reference in interaction module after re-render
+    if (this.interaction && this.svgElement) {
+      this.interaction.updateSvgReference(this.svgElement);
+    }
   }
 
   /**
@@ -236,9 +241,9 @@ export class Abacus {
     `;
 
     return `
-      <g class="bead" data-col="${col}" data-type="${type}" data-index="${index}">
-        <path d="${path}" fill="url(#beadGradient)" filter="url(#beadShadow)"/>
-        <line x1="${x - width}" y1="${y}" x2="${x + width}" y2="${y}" stroke="rgba(0, 0, 0, 0.075)" stroke-width="2"/>
+      <g class="bead" data-col="${col}" data-type="${type}" data-index="${index}" style="cursor: pointer;">
+        <path d="${path}" fill="url(#beadGradient)" filter="url(#beadShadow)" style="pointer-events: all;"/>
+        <line x1="${x - width}" y1="${y}" x2="${x + width}" y2="${y}" stroke="rgba(0, 0, 0, 0.075)" stroke-width="2" style="pointer-events: none;"/>
       </g>
     `;
   }

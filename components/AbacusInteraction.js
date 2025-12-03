@@ -253,42 +253,79 @@ export class AbacusInteraction {
   getBeadAtPosition(x, y) {
     const beadWidth = this.abacus.config.beadWidth;
     const beadHeight = this.abacus.config.beadHeight;
-    
+
+    // Use larger hit area for better UX (add 10px padding)
+    const hitRadius = beadWidth + 10;
+
     for (let col = 0; col < this.abacus.digitCount; col++) {
       const rodX = 50 + col * 72;
-      
+
       // Check heaven bead
       const heavenY = this.abacus.beads[col].heaven.y;
-      if (isPointInCircle(x, y, rodX, heavenY, beadWidth)) {
+      if (isPointInCircle(x, y, rodX, heavenY, hitRadius)) {
         return { col, type: 'heaven', index: 0 };
       }
-      
-      // Check earth beads
-      for (let i = 0; i < 4; i++) {
+
+      // Check earth beads (iterate backwards so top beads are checked first)
+      for (let i = 3; i >= 0; i--) {
         const earthY = this.abacus.beads[col].earth[i].y;
-        if (isPointInCircle(x, y, rodX, earthY, beadWidth)) {
+        if (isPointInCircle(x, y, rodX, earthY, hitRadius)) {
           return { col, type: 'earth', index: i };
         }
       }
     }
-    
+
     return null;
+  }
+
+  /**
+   * Update SVG reference after re-render
+   * @param {SVGElement} newSvg - New SVG element
+   */
+  updateSvgReference(newSvg) {
+    if (!newSvg) {
+      logger.error(CONTEXT, 'Cannot update SVG reference: newSvg is null');
+      return;
+    }
+
+    // Remove old event listeners
+    if (this.svg) {
+      this.svg.removeEventListener('mousedown', this.onMouseDown);
+      this.svg.removeEventListener('touchstart', this.onTouchStart);
+      if (!this.isTouchDevice) {
+        this.svg.removeEventListener('mousemove', this.onHover);
+      }
+    }
+
+    // Update reference
+    this.svg = newSvg;
+
+    // Re-attach event listeners to new SVG
+    this.svg.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.svg.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
+
+    if (!this.isTouchDevice) {
+      this.svg.addEventListener('mousemove', this.onHover.bind(this));
+    }
+
+    logger.debug(CONTEXT, 'SVG reference updated');
   }
 
   /**
    * Destroy interaction and clean up events
    */
   destroy() {
-    this.svg.removeEventListener('mousedown', this.onMouseDown);
+    if (this.svg) {
+      this.svg.removeEventListener('mousedown', this.onMouseDown);
+      this.svg.removeEventListener('touchstart', this.onTouchStart);
+      this.svg.removeEventListener('mousemove', this.onHover);
+    }
+
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
-    
-    this.svg.removeEventListener('touchstart', this.onTouchStart);
     document.removeEventListener('touchmove', this.onTouchMove);
     document.removeEventListener('touchend', this.onTouchEnd);
-    
-    this.svg.removeEventListener('mousemove', this.onHover);
-    
+
     logger.debug(CONTEXT, 'Interaction destroyed');
   }
 }
