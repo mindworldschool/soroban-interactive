@@ -36,17 +36,12 @@ export class AbacusInteraction {
     this.svg.addEventListener('mousedown', this.onMouseDown.bind(this));
     document.addEventListener('mousemove', this.onMouseMove.bind(this));
     document.addEventListener('mouseup', this.onMouseUp.bind(this));
-    
+
     // Touch events
     this.svg.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
     document.addEventListener('touchmove', this.onTouchMove.bind(this), { passive: false });
     document.addEventListener('touchend', this.onTouchEnd.bind(this));
-    
-    // Hover effect (desktop only)
-    if (!this.isTouchDevice) {
-      this.svg.addEventListener('mousemove', this.onHover.bind(this));
-    }
-    
+
     logger.debug(CONTEXT, 'Events initialized');
   }
 
@@ -99,11 +94,6 @@ export class AbacusInteraction {
 
     this.beadStartY = beadData.y;
     beadData.isDragging = true;
-
-    // Visual feedback
-    if (this.abacus.renderer) {
-      this.abacus.renderer.setBeadDragging(bead.col, bead.type, bead.index, true);
-    }
 
     logger.debug(CONTEXT, `Started dragging: col=${bead.col}, type=${bead.type}, index=${bead.index}`);
   }
@@ -202,7 +192,7 @@ export class AbacusInteraction {
    */
   endDrag() {
     if (!this.draggedBead) return;
-    
+
     // Snap to grid
     if (this.abacus.physics) {
       this.abacus.physics.snapBead(
@@ -211,38 +201,13 @@ export class AbacusInteraction {
         this.draggedBead.index
       );
     }
-    
-    // Reset dragging state
-    if (this.abacus.renderer) {
-      this.abacus.renderer.setBeadDragging(
-        this.draggedBead.col,
-        this.draggedBead.type,
-        this.draggedBead.index,
-        false
-      );
-    }
-    
+
     logger.debug(CONTEXT, 'Drag ended');
-    
+
     this.isDragging = false;
     this.draggedBead = null;
   }
 
-  /**
-   * Hover handler (desktop only)
-   * @param {MouseEvent} e
-   */
-  onHover(e) {
-    if (this.isDragging) return;
-    
-    const { x, y } = screenToSVG(this.svg, e.clientX, e.clientY);
-    const bead = this.getBeadAtPosition(x, y);
-    
-    // Update cursor and highlight
-    if (bead && this.abacus.renderer) {
-      this.abacus.renderer.highlightBead(bead.col, bead.type, bead.index, true);
-    }
-  }
 
   /**
    * Find bead at given position
@@ -292,9 +257,6 @@ export class AbacusInteraction {
     if (this.svg) {
       this.svg.removeEventListener('mousedown', this.onMouseDown);
       this.svg.removeEventListener('touchstart', this.onTouchStart);
-      if (!this.isTouchDevice) {
-        this.svg.removeEventListener('mousemove', this.onHover);
-      }
     }
 
     // Update reference
@@ -303,10 +265,6 @@ export class AbacusInteraction {
     // Re-attach event listeners to new SVG
     this.svg.addEventListener('mousedown', this.onMouseDown.bind(this));
     this.svg.addEventListener('touchstart', this.onTouchStart.bind(this), { passive: false });
-
-    if (!this.isTouchDevice) {
-      this.svg.addEventListener('mousemove', this.onHover.bind(this));
-    }
 
     logger.debug(CONTEXT, 'SVG reference updated');
   }
@@ -318,7 +276,6 @@ export class AbacusInteraction {
     if (this.svg) {
       this.svg.removeEventListener('mousedown', this.onMouseDown);
       this.svg.removeEventListener('touchstart', this.onTouchStart);
-      this.svg.removeEventListener('mousemove', this.onHover);
     }
 
     document.removeEventListener('mousemove', this.onMouseMove);
