@@ -75,13 +75,15 @@ export class Abacus {
     const width = this.digitCount * 72 + 40;
 
     this.container.innerHTML = `
-      <svg id="abacus-svg" width="${width}" height="300" style="user-select: none;">
+      <svg id="abacus-svg" width="${width}" height="340" style="user-select: none;">
         ${this.renderDefs()}
-        ${this.renderFrame()}
-        ${this.renderRods()}
-        ${this.renderMiddleBar()}
-        ${this.renderBeads()}
         ${this.config.showDigits ? this.renderDigits() : ''}
+        <g transform="translate(0, 40)">
+          ${this.renderFrame()}
+          ${this.renderRods()}
+          ${this.renderMiddleBar()}
+          ${this.renderBeads()}
+        </g>
       </svg>
     `;
 
