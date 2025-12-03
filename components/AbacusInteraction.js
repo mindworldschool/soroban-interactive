@@ -158,13 +158,31 @@ export class AbacusInteraction {
       // Earth beads - handle collision and group movement
       this.updateEarthBeadWithCollision(col, index, desiredY);
 
-      // Update positions for all earth beads based on distance from middle bar
-      const ACTIVATION_DISTANCE_EARTH = 30; // Косточка активна если в пределах 30px от средней планки
-      const barBottom = 121;
-      const thresholdEarth = barBottom + ACTIVATION_DISTANCE_EARTH; // 151
-      this.abacus.beads[col].earth.forEach(bead => {
-        bead.position = bead.y < thresholdEarth ? 'up' : 'down';
-      });
+      // Update positions for all earth beads based on compact group at bottom
+      const beads = this.abacus.beads[col].earth;
+      const beadHeight = this.abacus.config.beadHeight;
+      const gap = 1;
+      const bottomY = 284 - beadHeight / 2 - gap; // 265
+      const TOLERANCE = 5;
+
+      let inactiveCount = 0;
+      let expectedY = bottomY;
+
+      // Проверяем снизу вверх - косточки в компактной группе у низа = неактивны
+      for (let i = 3; i >= 0; i--) {
+        if (Math.abs(beads[i].y - expectedY) < TOLERANCE) {
+          beads[i].position = 'down';
+          inactiveCount++;
+          expectedY = expectedY - beadHeight;
+        } else {
+          break;
+        }
+      }
+
+      // Все косточки выше компактной группы - активны
+      for (let i = 0; i < 4 - inactiveCount; i++) {
+        beads[i].position = 'up';
+      }
     }
 
     // Update digit display in real-time
