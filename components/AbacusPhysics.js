@@ -21,55 +21,55 @@ export class AbacusPhysics {
   }
 
   /**
-   * Snap bead to nearest valid position
+   * Snap bead - just update position state based on current Y
+   * No animation, bead stays where user released it
    * @param {number} col - Column index
    * @param {string} type - 'heaven' or 'earth'
    * @param {number} index - Bead index
    */
   snapBead(col, type, index) {
-    const bead = this.abacus.beads[col][type === 'heaven' ? 'heaven' : 'earth'][index];
-    const currentY = bead.y;
+    const beadRef = type === 'heaven'
+      ? this.abacus.beads[col].heaven
+      : this.abacus.beads[col].earth[index];
+
+    const currentY = beadRef.y;
     const barY = this.abacus.config.barY;
-    
-    let targetY;
-    let targetPosition;
-    
+
+    // Determine position based on current Y coordinate
     if (type === 'heaven') {
-      // Heaven bead: snap to 'up' or 'down'
-      const upY = 40 + this.abacus.config.beadHeight / 2 + this.abacus.config.gapFromBar;
-      const downY = barY - this.abacus.config.beadHeight / 2 - this.abacus.config.gapFromBar;
-      
-      // Determine which position is closer
-      if (currentY < barY - this.SNAP_DISTANCE) {
-        targetY = upY;
-        targetPosition = 'up';
-      } else {
-        targetY = downY;
-        targetPosition = 'down';
-      }
+      // Heaven bead: if closer to bar = 'down' (active), otherwise 'up' (inactive)
+      const midPoint = (40 + this.abacus.config.beadHeight / 2 + 91 - this.abacus.config.beadHeight / 2) / 2;
+      beadRef.position = currentY > midPoint ? 'down' : 'up';
     } else {
-      // Earth bead: snap to 'up' or 'down'
-      if (currentY < barY + 10 + this.SNAP_DISTANCE) {
-        targetPosition = 'up';
-        // Calculate Y based on how many beads are already up
-        const upCount = this.abacus.beads[col].earth
-          .slice(0, index)
-          .filter(b => b.position === 'up').length;
-        targetY = barY + 10 + this.abacus.config.beadHeight / 2 + 
-                  this.abacus.config.gapFromBar + upCount * this.abacus.config.beadHeight;
-      } else {
-        targetPosition = 'down';
-        // Calculate Y based on how many beads are down after this one
-        const downCount = this.abacus.beads[col].earth
-          .slice(index + 1)
-          .filter(b => b.position === 'down').length;
-        targetY = 264 - this.abacus.config.beadHeight / 2 - 
-                  this.abacus.config.gapFromBar - downCount * this.abacus.config.beadHeight;
-      }
+      // Earth bead: if closer to bar = 'up' (active), otherwise 'down' (inactive)
+      const midPoint = (101 + this.abacus.config.beadHeight / 2 + 264 - this.abacus.config.beadHeight / 2) / 2;
+      beadRef.position = currentY < midPoint ? 'up' : 'down';
     }
-    
-    // Animate to target position
-    this.animateBeadTo(col, type, index, targetY, targetPosition);
+
+    beadRef.isDragging = false;
+
+    // Update digits if enabled
+    if (this.abacus.config.showDigits && this.abacus.renderer) {
+      this.abacus.renderer.updateDigits();
+    }
+
+    // Trigger onChange event
+    this.abacus.triggerEvent('onChange', {
+      col,
+      type,
+      index,
+      value: this.abacus.getValue()
+    });
+
+    // Trigger onBeadSnap event
+    this.abacus.triggerEvent('onBeadSnap', {
+      col,
+      type,
+      index,
+      position: beadRef.position
+    });
+
+    logger.debug(CONTEXT, `Bead snapped: col=${col}, type=${type}, position=${beadRef.position}`);
   }
 
   /**
@@ -145,18 +145,21 @@ export class AbacusPhysics {
   getYConstraints(col, type, index) {
     const barY = this.abacus.config.barY;
     const beadHeight = this.abacus.config.beadHeight;
-    
+    const gapFromBar = this.abacus.config.gapFromBar;
+
     if (type === 'heaven') {
-      // Heaven bead can move between top and bar
+      // Heaven bead can move between top frame and bar
+      // Stop 1px before bar (91 is bar top, so max should be bar top - beadHeight/2 - gap - 1)
       return {
-        min: 40 + beadHeight / 2,
-        max: barY - beadHeight / 2 - 1
+        min: 40 + beadHeight / 2 + gapFromBar,
+        max: 91 - beadHeight / 2 - gapFromBar - 1
       };
     } else {
-      // Earth bead can move between bar and bottom
+      // Earth bead can move between bar and bottom frame
+      // Start 1px after bar (101 is bar bottom)
       return {
-        min: barY + 10 + beadHeight / 2 + 1,
-        max: 264 - beadHeight / 2
+        min: 101 + beadHeight / 2 + gapFromBar + 1,
+        max: 264 - beadHeight / 2 - gapFromBar
       };
     }
   }
