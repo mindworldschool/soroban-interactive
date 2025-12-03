@@ -169,67 +169,43 @@ export class AbacusInteraction {
     const beadHeight = this.abacus.config.beadHeight;
     const minGap = 0; // No gap - beads touch each other
 
-    const currentY = beads[draggedIndex].y;
-    const movingUp = desiredY < currentY;
-
     // Get base constraints (bar and frame limits)
     const barBottom = 101;
     const bottomFrame = 264;
     const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
     const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
 
-    if (movingUp) {
-      // Moving up - can push beads above
-      let newY = Math.max(minY, desiredY);
+    // Constrain to frame limits first
+    let newY = Math.max(minY, Math.min(maxY, desiredY));
 
-      // Check collision with bead above
-      if (draggedIndex > 0) {
-        const beadAbove = beads[draggedIndex - 1];
-        const maxAllowedY = beadAbove.y - beadHeight - minGap;
+    // Check collision with bead above
+    if (draggedIndex > 0) {
+      const beadAbove = beads[draggedIndex - 1];
+      const minDistanceFromAbove = beadAbove.y + beadHeight + minGap;
 
-        if (newY <= maxAllowedY) {
-          // No collision, move freely
-          beads[draggedIndex].y = newY;
-          if (this.abacus.renderer) {
-            this.abacus.renderer.updateBeadPosition(col, 'earth', draggedIndex, newY);
-          }
-        } else {
-          // Collision - push beads above
-          this.pushBeadsUp(col, draggedIndex, newY);
-        }
-      } else {
-        // Top bead, just constrain
-        beads[draggedIndex].y = newY;
-        if (this.abacus.renderer) {
-          this.abacus.renderer.updateBeadPosition(col, 'earth', draggedIndex, newY);
-        }
+      if (newY < minDistanceFromAbove) {
+        // Would collide with bead above - push group up
+        this.pushBeadsUp(col, draggedIndex, newY);
+        return;
       }
-    } else {
-      // Moving down - can push beads below
-      let newY = Math.min(maxY, desiredY);
+    }
 
-      // Check collision with bead below
-      if (draggedIndex < 3) {
-        const beadBelow = beads[draggedIndex + 1];
-        const minAllowedY = beadBelow.y + beadHeight + minGap;
+    // Check collision with bead below
+    if (draggedIndex < 3) {
+      const beadBelow = beads[draggedIndex + 1];
+      const maxDistanceFromBelow = beadBelow.y - beadHeight - minGap;
 
-        if (newY >= minAllowedY) {
-          // No collision, move freely
-          beads[draggedIndex].y = newY;
-          if (this.abacus.renderer) {
-            this.abacus.renderer.updateBeadPosition(col, 'earth', draggedIndex, newY);
-          }
-        } else {
-          // Collision - push beads below
-          this.pushBeadsDown(col, draggedIndex, newY);
-        }
-      } else {
-        // Bottom bead, just constrain
-        beads[draggedIndex].y = newY;
-        if (this.abacus.renderer) {
-          this.abacus.renderer.updateBeadPosition(col, 'earth', draggedIndex, newY);
-        }
+      if (newY > maxDistanceFromBelow) {
+        // Would collide with bead below - push group down
+        this.pushBeadsDown(col, draggedIndex, newY);
+        return;
       }
+    }
+
+    // No collision - move freely
+    beads[draggedIndex].y = newY;
+    if (this.abacus.renderer) {
+      this.abacus.renderer.updateBeadPosition(col, 'earth', draggedIndex, newY);
     }
   }
 
@@ -242,35 +218,52 @@ export class AbacusInteraction {
   pushBeadsUp(col, startIndex, newY) {
     const beads = this.abacus.beads[col].earth;
     const beadHeight = this.abacus.config.beadHeight;
-    const minGap = 0; // Beads touch each other
+    const minGap = 0;
 
     const barBottom = 101;
     const minY = barBottom + beadHeight / 2 + this.abacus.config.gapFromBar + 1;
 
-    // Calculate positions from dragged bead upward
-    const positions = [];
-    positions[startIndex] = Math.max(minY, newY);
+    // Find which beads need to move (only touching beads)
+    const beadsToMove = [startIndex];
 
-    // Calculate positions for beads above
+    // Check beads above that are touching
     for (let i = startIndex - 1; i >= 0; i--) {
-      const requiredY = positions[i + 1] - beadHeight - minGap;
-      positions[i] = Math.max(minY, requiredY);
+      const beadBelow = beads[i + 1];
+      const expectedTouchY = beadBelow.y - beadHeight - minGap;
+
+      // Only include if bead is touching the one below it
+      if (Math.abs(beads[i].y - expectedTouchY) < 1) {
+        beadsToMove.unshift(i);
+      } else {
+        break; // Stop if gap found
+      }
     }
 
-    // Check if top bead hits the limit
-    if (positions[0] <= minY) {
-      // Top bead hit limit, recalculate from top down
-      positions[0] = minY;
-      for (let i = 1; i <= startIndex; i++) {
+    // Calculate new positions
+    const topIndex = beadsToMove[0];
+    const positions = {};
+
+    positions[startIndex] = newY;
+
+    // Calculate positions upward
+    for (let i = startIndex - 1; i >= topIndex; i--) {
+      positions[i] = positions[i + 1] - beadHeight - minGap;
+    }
+
+    // Check if top bead would go beyond limit
+    if (positions[topIndex] < minY) {
+      // Limit hit - recalculate from top
+      positions[topIndex] = minY;
+      for (let i = topIndex + 1; i <= startIndex; i++) {
         positions[i] = positions[i - 1] + beadHeight + minGap;
       }
     }
 
-    // Update all affected beads
-    for (let i = 0; i <= startIndex; i++) {
-      beads[i].y = positions[i];
+    // Update positions
+    for (const index of beadsToMove) {
+      beads[index].y = positions[index];
       if (this.abacus.renderer) {
-        this.abacus.renderer.updateBeadPosition(col, 'earth', i, positions[i]);
+        this.abacus.renderer.updateBeadPosition(col, 'earth', index, positions[index]);
       }
     }
   }
@@ -284,35 +277,52 @@ export class AbacusInteraction {
   pushBeadsDown(col, startIndex, newY) {
     const beads = this.abacus.beads[col].earth;
     const beadHeight = this.abacus.config.beadHeight;
-    const minGap = 0; // Beads touch each other
+    const minGap = 0;
 
     const bottomFrame = 264;
     const maxY = bottomFrame - beadHeight / 2 - this.abacus.config.gapFromBar;
 
-    // Calculate positions from dragged bead downward
-    const positions = [];
-    positions[startIndex] = Math.min(maxY, newY);
+    // Find which beads need to move (only touching beads)
+    const beadsToMove = [startIndex];
 
-    // Calculate positions for beads below
+    // Check beads below that are touching
     for (let i = startIndex + 1; i < 4; i++) {
-      const requiredY = positions[i - 1] + beadHeight + minGap;
-      positions[i] = Math.min(maxY, requiredY);
+      const beadAbove = beads[i - 1];
+      const expectedTouchY = beadAbove.y + beadHeight + minGap;
+
+      // Only include if bead is touching the one above it
+      if (Math.abs(beads[i].y - expectedTouchY) < 1) {
+        beadsToMove.push(i);
+      } else {
+        break; // Stop if gap found
+      }
     }
 
-    // Check if bottom bead hits the limit
-    if (positions[3] >= maxY) {
-      // Bottom bead hit limit, recalculate from bottom up
-      positions[3] = maxY;
-      for (let i = 2; i >= startIndex; i--) {
+    // Calculate new positions
+    const bottomIndex = beadsToMove[beadsToMove.length - 1];
+    const positions = {};
+
+    positions[startIndex] = newY;
+
+    // Calculate positions downward
+    for (let i = startIndex + 1; i <= bottomIndex; i++) {
+      positions[i] = positions[i - 1] + beadHeight + minGap;
+    }
+
+    // Check if bottom bead would go beyond limit
+    if (positions[bottomIndex] > maxY) {
+      // Limit hit - recalculate from bottom
+      positions[bottomIndex] = maxY;
+      for (let i = bottomIndex - 1; i >= startIndex; i--) {
         positions[i] = positions[i + 1] - beadHeight - minGap;
       }
     }
 
-    // Update all affected beads
-    for (let i = startIndex; i < 4; i++) {
-      beads[i].y = positions[i];
+    // Update positions
+    for (const index of beadsToMove) {
+      beads[index].y = positions[index];
       if (this.abacus.renderer) {
-        this.abacus.renderer.updateBeadPosition(col, 'earth', i, positions[i]);
+        this.abacus.renderer.updateBeadPosition(col, 'earth', index, positions[index]);
       }
     }
   }
