@@ -48,18 +48,25 @@ export class Abacus {
    */
   init() {
     // Initialize all beads to starting position
+    const beadHeight = this.config.beadHeight;
+    const gap = this.config.gapFromBar;
+
+    // Начальные позиции - компактная группа внизу
+    const bottomY = 284 - beadHeight / 2 - gap; // 265 - самая нижняя у нижней рамки
+
     for (let col = 0; col < this.digitCount; col++) {
       this.beads[col] = {
         heaven: {
           position: 'up', // 'up' | 'down'
-          y: 60 + this.config.beadHeight / 2 + this.config.gapFromBar,
+          y: 60 + beadHeight / 2 + gap,  // 79
           isDragging: false
         },
         earth: [
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 3 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 2 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 1 * this.config.beadHeight, isDragging: false },
-          { position: 'down', y: 284 - this.config.beadHeight / 2 - this.config.gapFromBar - 0 * this.config.beadHeight, isDragging: false }
+          // Косточки компактной группой внизу (впритык друг к другу, расстояние = beadHeight)
+          { position: 'down', y: bottomY - 3 * beadHeight, isDragging: false }, // 157
+          { position: 'down', y: bottomY - 2 * beadHeight, isDragging: false }, // 193
+          { position: 'down', y: bottomY - 1 * beadHeight, isDragging: false }, // 229
+          { position: 'down', y: bottomY - 0 * beadHeight, isDragging: false }  // 265
         ]
       };
     }
