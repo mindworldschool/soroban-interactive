@@ -159,13 +159,13 @@ export class Abacus {
           <stop offset="100%" stop-color="#6B3410" stop-opacity="1" />
         </linearGradient>
 
-        <!-- Gradient for metal bar -->
+        <!-- Gradient for metal bar (darker for better notch visibility) -->
         <linearGradient id="metalBarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#949494" stop-opacity="1" />
-          <stop offset="30%" stop-color="#ababab" stop-opacity="1" />
-          <stop offset="50%" stop-color="#757575" stop-opacity="1" />
-          <stop offset="70%" stop-color="#8c8c8c" stop-opacity="1" />
-          <stop offset="100%" stop-color="#606060" stop-opacity="1" />
+          <stop offset="0%" stop-color="#707070" stop-opacity="1" />
+          <stop offset="30%" stop-color="#808080" stop-opacity="1" />
+          <stop offset="50%" stop-color="#555555" stop-opacity="1" />
+          <stop offset="70%" stop-color="#686868" stop-opacity="1" />
+          <stop offset="100%" stop-color="#454545" stop-opacity="1" />
         </linearGradient>
 
         <!-- Gradient for beads -->
@@ -244,12 +244,12 @@ export class Abacus {
 
       // Засечка каждые 3 разряда справа
       if (rightIndex % 3 === targetRemainder) {
-        // Вдавленная точка на средней планке (более заметная)
+        // Золотая вдавленная точка на средней планке
         notchesHTML += `
-          <circle cx="${x}" cy="116" r="5" fill="#8C6B32"/>
-          <circle cx="${x}" cy="115.5" r="4" fill="#B88A3B"/>
-          <circle cx="${x}" cy="115" r="2.5" fill="#DDB45A"/>
-          <circle cx="${x}" cy="114.5" r="1" fill="#F5E3A4"/>
+          <circle cx="${x}" cy="116" r="5" fill="#8B6914"/>
+          <circle cx="${x}" cy="115.5" r="4" fill="#B8860B"/>
+          <circle cx="${x}" cy="115" r="2.5" fill="#DAA520"/>
+          <circle cx="${x}" cy="114.5" r="1" fill="#FFD700"/>
         `;
       }
     }
