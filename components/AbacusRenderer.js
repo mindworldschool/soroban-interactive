@@ -28,9 +28,9 @@ export class AbacusRenderer {
 
     const selector = `[data-col="${col}"][data-type="${type}"][data-index="${index}"]`;
     const beadGroup = svg.querySelector(selector);
-    
+
     if (beadGroup) {
-      const x = 50 + col * 72;
+      const x = 55 + col * 72; // Смещено на 5 для симметрии с планками
       const path = beadGroup.querySelector('path');
       const line = beadGroup.querySelector('line');
       
@@ -147,7 +147,7 @@ export class AbacusRenderer {
     digitsGroup.setAttribute('class', 'digits');
 
     for (let col = 0; col < this.abacus.digitCount; col++) {
-      const x = 50 + col * 72;
+      const x = 55 + col * 72; // Смещено на 5 для симметрии с планками
       const value = this.abacus.getColumnValue(col);
 
       // Create text element with proper SVG namespace

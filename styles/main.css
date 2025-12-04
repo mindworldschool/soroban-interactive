@@ -163,7 +163,7 @@ body {
   border-radius: var(--radius);
   box-shadow: 0 4px 20px var(--shadow);
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
   animation: fadeIn 0.3s ease;
   max-height: calc(100vh - 8rem);
@@ -246,6 +246,7 @@ body {
   align-items: center;
   padding: 1rem;
   min-height: 350px;
+  overflow: visible;
 }
 
 /* ==========================================
