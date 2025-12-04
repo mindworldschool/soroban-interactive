@@ -27,7 +27,8 @@ export class Abacus {
       beadWidth: 32,
       beadHeight: 36,
       gapFromBar: 1,
-      barY: 116 // Middle bar Y position
+      barY: 116, // Middle bar Y position
+      notchOffset: 0 // Смещение засечек: 0 = стандарт (3,6,9...), 1 = влево (2,5,8...), 2 = вправо (1,4,7...)
     };
 
     // Event callbacks
@@ -173,6 +174,13 @@ export class Abacus {
           <stop offset="50%" stop-color="#ff7c00" stop-opacity="1" />
           <stop offset="100%" stop-color="#cc6300" stop-opacity="1" />
         </radialGradient>
+
+        <!-- Gradient for notches (inverted for "pressed in" effect) -->
+        <radialGradient id="notchGradient" cx="50%" cy="30%">
+          <stop offset="0%" stop-color="#404040" stop-opacity="1" />
+          <stop offset="60%" stop-color="#505050" stop-opacity="1" />
+          <stop offset="100%" stop-color="#707070" stop-opacity="1" />
+        </radialGradient>
       </defs>
     `;
   }
@@ -216,7 +224,35 @@ export class Abacus {
       <rect x="${startX}" y="111" width="${width}" height="10" fill="url(#metalBarGradient)" rx="5" ry="5"/>
       <rect x="${startX + 5}" y="112" width="${width - 10}" height="2" fill="rgba(255, 255, 255, 0.6)" rx="1"/>
       <rect x="${startX}" y="121" width="${width}" height="2" fill="rgba(0, 0, 0, 0.3)" rx="1"/>
+      ${this.renderNotches()}
     `;
+  }
+
+  /**
+   * Render notches (засечки) on the middle bar
+   * Notches are placed every 3rd digit from the RIGHT (for thousands, millions, etc.)
+   */
+  renderNotches() {
+    let notchesHTML = '';
+    const notchOffset = this.config.notchOffset || 0;
+    // Целевой остаток: 2 = стандарт (3,6,9 справа), 1 = сдвиг влево, 0 = сдвиг вправо
+    const targetRemainder = (2 - notchOffset + 3) % 3;
+
+    for (let col = 0; col < this.columns; col++) {
+      const x = 60 + col * 72; // Позиция стержня
+      const rightIndex = this.columns - 1 - col; // Индекс справа (0 = самый правый)
+
+      // Засечка каждые 3 разряда справа
+      if (rightIndex % 3 === targetRemainder) {
+        // Вдавленная полусфера на средней планке
+        notchesHTML += `
+          <ellipse cx="${x}" cy="116" rx="4" ry="3" fill="url(#notchGradient)"/>
+          <ellipse cx="${x}" cy="115" rx="2.5" ry="1.5" fill="rgba(0,0,0,0.3)"/>
+        `;
+      }
+    }
+
+    return notchesHTML;
   }
 
   /**
@@ -401,6 +437,16 @@ export class Abacus {
     this.config.showDigits = show;
     this.render();
     logger.debug(CONTEXT, `Show digits: ${show}`);
+  }
+
+  /**
+   * Set notch offset for position markers
+   * @param {number} offset - 0 (standard), 1 (shift left), 2 (shift right)
+   */
+  setNotchOffset(offset) {
+    this.config.notchOffset = offset;
+    this.render();
+    logger.debug(CONTEXT, `Notch offset: ${offset}`);
   }
 
   /**

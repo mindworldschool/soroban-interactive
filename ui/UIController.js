@@ -149,6 +149,19 @@ export class UIController {
       sizeOptions[2].textContent = i18n.t('sizeLarge');
     }
 
+    // Notch position label and options
+    const notchLabel = document.querySelector('label[for="notchOffsetSelect"]');
+    if (notchLabel) {
+      notchLabel.textContent = i18n.t('notchPosition');
+    }
+
+    const notchOptions = document.querySelectorAll('#notchOffsetSelect option');
+    if (notchOptions.length === 3) {
+      notchOptions[0].textContent = i18n.t('notchStandard');
+      notchOptions[1].textContent = i18n.t('notchLeft');
+      notchOptions[2].textContent = i18n.t('notchRight');
+    }
+
     const closeBtn = document.getElementById('closeConfig');
     if (closeBtn) {
       closeBtn.textContent = i18n.t('close');
@@ -225,6 +238,23 @@ export class UIController {
       sizeSelect.addEventListener('change', (e) => {
         const newSize = parseInt(e.target.value, 10);
         this.changeAbacusSize(newSize);
+      });
+    }
+
+    // Notch offset selector
+    const notchOffsetSelect = document.getElementById('notchOffsetSelect');
+    if (notchOffsetSelect) {
+      // Load saved state
+      const config = loadConfig() || {};
+      const savedOffset = config.notchOffset || 0;
+      notchOffsetSelect.value = savedOffset;
+      this.abacus.setNotchOffset(savedOffset);
+
+      notchOffsetSelect.addEventListener('change', (e) => {
+        const newOffset = parseInt(e.target.value, 10);
+        this.abacus.setNotchOffset(newOffset);
+        saveConfig({ ...loadConfig(), notchOffset: newOffset });
+        logger.info(CONTEXT, `Notch offset: ${newOffset}`);
       });
     }
 
