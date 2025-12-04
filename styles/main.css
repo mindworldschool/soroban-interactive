@@ -139,7 +139,7 @@ body {
   justify-content: center;
   align-items: center;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 /* ==========================================
@@ -163,11 +163,12 @@ body {
   border-radius: var(--radius);
   box-shadow: 0 4px 20px var(--shadow);
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1500px;
   width: 100%;
   animation: fadeIn 0.3s ease;
   max-height: calc(100vh - 8rem);
   overflow-y: auto;
+  overflow-x: visible;
 }
 
 @keyframes fadeIn {
