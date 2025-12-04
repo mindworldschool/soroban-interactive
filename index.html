@@ -140,7 +140,7 @@
               } else if (refUrl.hostname.startsWith("ua.") || refUrl.hostname.startsWith("uk.")) {
                 lang = "ua";
               }
-              // По умолчанию для mindworldschool
+              // По умолчанию для mindworldschool (украинская версия - корень без /ua/)
               else if (refUrl.hostname.includes("mindworldschool")) {
                 lang = "ua";
               }
@@ -152,6 +152,9 @@
                 lang = "ru";
               } else if (referrer.includes("/es/") || referrer.endsWith("/es")) {
                 lang = "es";
+              } else if (referrer.includes("mindworldschool")) {
+                // Украинская версия без префикса /ua/ (это корень сайта)
+                lang = "ua";
               }
             }
           }
