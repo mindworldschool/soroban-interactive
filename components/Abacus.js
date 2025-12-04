@@ -246,10 +246,10 @@ export class Abacus {
       if (rightIndex % 3 === targetRemainder) {
         // Вдавленная точка на средней планке (более заметная)
         notchesHTML += `
-          <circle cx="${x}" cy="116" r="5" fill="#303030"/>
-          <circle cx="${x}" cy="115.5" r="4" fill="#404040"/>
-          <circle cx="${x}" cy="115" r="2.5" fill="#505050"/>
-          <circle cx="${x}" cy="114.5" r="1" fill="#707070"/>
+          <circle cx="${x}" cy="116" r="5" fill="#8C6B32"/>
+          <circle cx="${x}" cy="115.5" r="4" fill="#B88A3B"/>
+          <circle cx="${x}" cy="115" r="2.5" fill="#DDB45A"/>
+          <circle cx="${x}" cy="114.5" r="1" fill="#F5E3A4"/>
         `;
       }
     }
