@@ -5,7 +5,7 @@
 export const translations = {
   ua: {
     // Header
-    appTitle: 'Соробан',
+    appTitle: 'Abacus Trainer',
     appTagline: 'Інтерактивний тренажер абакуса',
 
     // Buttons
@@ -31,7 +31,7 @@ export const translations = {
   
   en: {
     // Header
-    appTitle: 'Soroban',
+    appTitle: 'Abacus Trainer',
     appTagline: 'Interactive Abacus Trainer',
 
     // Buttons
@@ -57,7 +57,7 @@ export const translations = {
   
   ru: {
     // Header
-    appTitle: 'Соробан',
+    appTitle: 'Abacus Trainer',
     appTagline: 'Интерактивный тренажер абакуса',
 
     // Buttons
@@ -83,7 +83,7 @@ export const translations = {
   
   es: {
     // Header
-    appTitle: 'Soroban',
+    appTitle: 'Abacus Trainer',
     appTagline: 'Entrenador Interactivo de Ábaco',
 
     // Buttons
