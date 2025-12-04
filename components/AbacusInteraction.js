@@ -418,7 +418,7 @@ export class AbacusInteraction {
     const hitRadiusY = beadHeight / 2 - 2; // Slightly smaller than actual height
 
     for (let col = 0; col < this.abacus.digitCount; col++) {
-      const rodX = 50 + col * 72;
+      const rodX = 55 + col * 72; // Смещено на 5 для симметрии с планками
 
       // Check heaven bead
       const heavenY = this.abacus.beads[col].heaven.y;
