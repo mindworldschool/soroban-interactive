@@ -93,7 +93,7 @@ export class Abacus {
     const width = this.columns * COLUMN_WIDTH + PADDING;
 
     this.container.innerHTML = `
-      <svg id="abacus-svg" width="${width}" height="340" style="user-select: none;">
+      <svg id="abacus-svg" width="${width}" height="360" style="user-select: none; overflow: visible;">
         ${this.renderDefs()}
         ${this.config.showDigits ? this.renderDigits() : ''}
         <g transform="translate(0, 40)">
