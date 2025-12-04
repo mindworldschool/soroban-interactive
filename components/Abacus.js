@@ -159,13 +159,13 @@ export class Abacus {
           <stop offset="100%" stop-color="#6B3410" stop-opacity="1" />
         </linearGradient>
 
-        <!-- Gradient for metal bar -->
+        <!-- Gradient for metal bar (darker for better notch visibility) -->
         <linearGradient id="metalBarGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#949494" stop-opacity="1" />
-          <stop offset="30%" stop-color="#ababab" stop-opacity="1" />
-          <stop offset="50%" stop-color="#757575" stop-opacity="1" />
-          <stop offset="70%" stop-color="#8c8c8c" stop-opacity="1" />
-          <stop offset="100%" stop-color="#606060" stop-opacity="1" />
+          <stop offset="0%" stop-color="#707070" stop-opacity="1" />
+          <stop offset="30%" stop-color="#808080" stop-opacity="1" />
+          <stop offset="50%" stop-color="#555555" stop-opacity="1" />
+          <stop offset="70%" stop-color="#686868" stop-opacity="1" />
+          <stop offset="100%" stop-color="#454545" stop-opacity="1" />
         </linearGradient>
 
         <!-- Gradient for beads -->
