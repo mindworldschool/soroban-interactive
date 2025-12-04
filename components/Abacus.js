@@ -80,9 +80,9 @@ export class Abacus {
    */
   render() {
     // Проверяем ширину контейнера и адаптируем количество разрядов
-    const containerWidth = this.container.clientWidth || 1400; // Дефолт если не определена
+    const containerWidth = this.container.clientWidth || 1500; // Дефолт если не определена
     const COLUMN_WIDTH = 72; // Ширина одного разряда
-    const PADDING = 50; // Отступы слева и справа (увеличено для закругленных краев)
+    const PADDING = 60; // Отступы слева и справа (увеличено для закругленных краев)
 
     // Вычисляем максимальное количество разрядов, которое влезает
     const maxVisibleDigits = Math.floor((containerWidth - PADDING) / COLUMN_WIDTH);
@@ -182,14 +182,14 @@ export class Abacus {
    */
   renderFrame() {
     const width = this.columns * 72 + 20;
-    const startX = 15; // Симметричный отступ слева
+    const startX = 20; // Симметричный отступ (PADDING=60, barPadding=20, так что (60-20)/2=20)
     return `
       <!-- Top frame -->
-      <rect x="${startX}" y="30" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="8" ry="8"/>
+      <rect x="${startX}" y="30" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="10" ry="10"/>
       <rect x="${startX + 5}" y="33" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
 
       <!-- Bottom frame -->
-      <rect x="${startX}" y="284" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="8" ry="8"/>
+      <rect x="${startX}" y="284" width="${width}" height="30" fill="url(#topFrameGradient)" filter="url(#frameShadow)" rx="10" ry="10"/>
       <rect x="${startX + 5}" y="287" width="${width - 10}" height="4" fill="rgba(255, 255, 255, 0.15)" rx="2"/>
     `;
   }
@@ -200,7 +200,7 @@ export class Abacus {
   renderRods() {
     let rods = '';
     for (let col = 0; col < this.columns; col++) {
-      const x = 55 + col * 72; // Смещено на 5 для симметрии с планками
+      const x = 60 + col * 72; // Центр первой колонки: startX(20) + 40
       rods += `<line x1="${x}" y1="60" x2="${x}" y2="284" stroke="#654321" stroke-width="8"/>`;
     }
     return rods;
@@ -211,7 +211,7 @@ export class Abacus {
    */
   renderMiddleBar() {
     const width = this.columns * 72 + 20;
-    const startX = 15; // Симметричный отступ слева
+    const startX = 20; // Симметричный отступ (PADDING=60, barPadding=20)
     return `
       <rect x="${startX}" y="111" width="${width}" height="10" fill="url(#metalBarGradient)" rx="5" ry="5"/>
       <rect x="${startX + 5}" y="112" width="${width - 10}" height="2" fill="rgba(255, 255, 255, 0.6)" rx="1"/>
@@ -226,7 +226,7 @@ export class Abacus {
     let beadsHTML = '';
 
     for (let col = 0; col < this.columns; col++) {
-      const x = 55 + col * 72; // Смещено на 5 для симметрии с планками
+      const x = 60 + col * 72; // Центр первой колонки: startX(20) + 40
       const beadHeight = this.config.beadHeight;
       const beadWidth = this.config.beadWidth;
 
@@ -282,7 +282,7 @@ export class Abacus {
     let digitsHTML = '<g class="digits">';
 
     for (let col = 0; col < this.columns; col++) {
-      const x = 55 + col * 72; // Смещено на 5 для симметрии с планками
+      const x = 60 + col * 72; // Центр первой колонки: startX(20) + 40
       const value = this.getColumnValue(col);
       
       digitsHTML += `
