@@ -146,7 +146,8 @@ export class AbacusRenderer {
     const digitsGroup = document.createElementNS(SVG_NS, 'g');
     digitsGroup.setAttribute('class', 'digits');
 
-    for (let col = 0; col < this.abacus.digitCount; col++) {
+    // Используем columns (видимые) вместо digitCount (все)
+    for (let col = 0; col < this.abacus.columns; col++) {
       const x = 60 + col * 72; // Центр первой колонки: startX(20) + 40
       const value = this.abacus.getColumnValue(col);
 
