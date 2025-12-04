@@ -244,10 +244,12 @@ export class Abacus {
 
       // Засечка каждые 3 разряда справа
       if (rightIndex % 3 === targetRemainder) {
-        // Вдавленная полусфера на средней планке
+        // Вдавленная точка на средней планке (более заметная)
         notchesHTML += `
-          <ellipse cx="${x}" cy="116" rx="4" ry="3" fill="url(#notchGradient)"/>
-          <ellipse cx="${x}" cy="115" rx="2.5" ry="1.5" fill="rgba(0,0,0,0.3)"/>
+          <circle cx="${x}" cy="116" r="5" fill="#303030"/>
+          <circle cx="${x}" cy="115.5" r="4" fill="#404040"/>
+          <circle cx="${x}" cy="115" r="2.5" fill="#505050"/>
+          <circle cx="${x}" cy="114.5" r="1" fill="#707070"/>
         `;
       }
     }
