@@ -111,14 +111,48 @@
           const referrer = document.referrer;
 
           if (referrer) {
-            if (referrer.includes("/en/") || referrer.endsWith("/en")) {
-              lang = "en";
-            } else if (referrer.includes("/ru/") || referrer.endsWith("/ru")) {
-              lang = "ru";
-            } else if (referrer.includes("/es/") || referrer.endsWith("/es")) {
-              lang = "es";
-            } else if (referrer.includes("mindworldschool.com") || referrer.includes("mindworldschool.github.io")) {
-              lang = "ua";
+            try {
+              const refUrl = new URL(referrer);
+              const refParams = new URLSearchParams(refUrl.search);
+              const refLang = refParams.get("lang");
+
+              // Проверяем параметр lang в URL источника
+              if (SUPPORTED_LANGS.includes(refLang)) {
+                lang = refLang;
+              }
+              // Проверяем путь URL источника
+              else if (refUrl.pathname.includes("/en/") || refUrl.pathname.endsWith("/en")) {
+                lang = "en";
+              } else if (refUrl.pathname.includes("/ru/") || refUrl.pathname.endsWith("/ru")) {
+                lang = "ru";
+              } else if (refUrl.pathname.includes("/es/") || refUrl.pathname.endsWith("/es")) {
+                lang = "es";
+              } else if (refUrl.pathname.includes("/ua/") || refUrl.pathname.endsWith("/ua") || refUrl.pathname.includes("/uk/")) {
+                lang = "ua";
+              }
+              // Проверяем поддомен (en.site.com, ru.site.com)
+              else if (refUrl.hostname.startsWith("en.")) {
+                lang = "en";
+              } else if (refUrl.hostname.startsWith("ru.")) {
+                lang = "ru";
+              } else if (refUrl.hostname.startsWith("es.")) {
+                lang = "es";
+              } else if (refUrl.hostname.startsWith("ua.") || refUrl.hostname.startsWith("uk.")) {
+                lang = "ua";
+              }
+              // По умолчанию для mindworldschool
+              else if (refUrl.hostname.includes("mindworldschool")) {
+                lang = "ua";
+              }
+            } catch (e) {
+              // Fallback для старой логики если URL parsing не сработал
+              if (referrer.includes("/en/") || referrer.endsWith("/en")) {
+                lang = "en";
+              } else if (referrer.includes("/ru/") || referrer.endsWith("/ru")) {
+                lang = "ru";
+              } else if (referrer.includes("/es/") || referrer.endsWith("/es")) {
+                lang = "es";
+              }
             }
           }
 
@@ -146,7 +180,7 @@
           }
         }
 
-        console.log("[Soroban] Selected language:", lang);
+        console.log("[Abacus Trainer] Selected language:", lang, "| Referrer:", document.referrer);
 
         // 6. Сохраняем язык
         localStorage.setItem("soroban_lang", lang);
