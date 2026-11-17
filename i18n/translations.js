@@ -26,7 +26,7 @@ export const translations = {
     notchRight: 'Зсув вправо (1, 4, 7... справа)',
 
     // Footer
-    footer: 'MindWorld School © 2025'
+    footer: 'MindWorld School © 2026'
   },
   
   en: {
@@ -52,7 +52,7 @@ export const translations = {
     notchRight: 'Shift right (1, 4, 7... from right)',
 
     // Footer
-    footer: 'MindWorld School © 2025'
+    footer: 'MindWorld School © 2026'
   },
   
   ru: {
@@ -78,7 +78,7 @@ export const translations = {
     notchRight: 'Сдвиг вправо (1, 4, 7... справа)',
 
     // Footer
-    footer: 'MindWorld School © 2025'
+    footer: 'MindWorld School © 2026'
   },
   
   es: {
@@ -104,6 +104,6 @@ export const translations = {
     notchRight: 'Desplazar derecha (1, 4, 7... desde derecha)',
 
     // Footer
-    footer: 'MindWorld School © 2025'
+    footer: 'MindWorld School © 2026'
   }
 };

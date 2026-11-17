@@ -37,36 +37,14 @@ export class UIController {
   }
 
   /**
-   * Create language switcher
+   * Смена языка из шапки общей оболочки (trainer-shell):
+   * кнопки UA / EN / RU / ES рисует оболочка и сообщает о смене событием mw:langchange
    */
   createLanguageSwitcher() {
-    const container = document.getElementById('languageSwitcher');
-    if (!container) return;
-
-    const languages = [
-      { code: 'ua', label: 'UA' },
-      { code: 'en', label: 'EN' },
-      { code: 'ru', label: 'RU' },
-      { code: 'es', label: 'ES' }
-    ];
-
-    container.innerHTML = '';
-
-    languages.forEach(lang => {
-      const btn = document.createElement('button');
-      btn.className = 'language-btn';
-      btn.textContent = lang.label;
-      btn.dataset.lang = lang.code;
-      
-      if (lang.code === this.currentLang) {
-        btn.classList.add('language-btn--active');
-      }
-
-      btn.addEventListener('click', () => this.changeLanguage(lang.code));
-      container.appendChild(btn);
+    document.addEventListener('mw:langchange', (e) => {
+      const lang = e.detail && e.detail.lang;
+      if (lang) this.changeLanguage(lang);
     });
-
-    logger.debug(CONTEXT, 'Language switcher created');
   }
 
   /**
@@ -76,17 +54,6 @@ export class UIController {
   changeLanguage(lang) {
     i18n.setLanguage(lang);
     this.currentLang = lang;
-    
-    // Update active button
-    const buttons = document.querySelectorAll('.language-btn');
-    buttons.forEach(btn => {
-      if (btn.dataset.lang === lang) {
-        btn.classList.add('language-btn--active');
-      } else {
-        btn.classList.remove('language-btn--active');
-      }
-    });
-    
     this.updateTexts();
     logger.info(CONTEXT, `Language changed to: ${lang}`);
   }
@@ -132,7 +99,8 @@ export class UIController {
       configTitle.textContent = i18n.t('configTitle');
     }
 
-    const showDigitsLabel = document.querySelector('label[for="showDigits"] span');
+    // У подписи нет атрибута for — берём <span> сразу после чекбокса
+    const showDigitsLabel = document.querySelector('#showDigits + span');
     if (showDigitsLabel) {
       showDigitsLabel.textContent = i18n.t('showDigits');
     }

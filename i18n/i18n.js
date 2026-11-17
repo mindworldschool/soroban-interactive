@@ -41,7 +41,7 @@ class I18n {
     }
 
     this.currentLang = lang;
-    localStorage.setItem('soroban_lang', lang);
+    try { localStorage.setItem('soroban_lang', lang); } catch (e) { /* хранилище недоступно — работаем без него */ }
     window.APP_LANG = lang;
     
     // Update HTML lang attribute
