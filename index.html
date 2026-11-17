@@ -21,41 +21,15 @@
     <!-- Иконка -->
     <link rel="icon" type="image/png" href="./assets/images/logo.png" />
 
-    <!-- Шрифты -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600&family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Стили -->
-    <link rel="stylesheet" href="./styles/main.css" />
+    <!-- Общая оболочка публичных тренажёров: шапка, языки, шрифты, цвета -->
+    <link rel="stylesheet" href="/trainer-shell/shell.v1.css" />
+    <link rel="stylesheet" href="./styles/main.css?v=2" />
+    <script src="/trainer-shell/shell.v1.js"></script>
   </head>
 
   <body>
-    <!-- Шапка -->
-    <header class="app-header">
-      <div class="app-header__brand">
-        <img
-          src="./assets/images/logo.png"
-          alt="MindWorld School logo"
-          class="app-header__logo"
-        />
-
-        <div class="app-header__titles">
-          <h1 class="app-header__title">
-            <span class="title-main" id="appTitle">Abacus Trainer</span>
-          </h1>
-          <h2 id="appTagline" class="app-header__tagline">
-            Інтерактивний тренажер абакуса
-          </h2>
-        </div>
-      </div>
-
-      <!-- Переключатель языков -->
-      <div id="languageSwitcher" class="app-header__languages"></div>
-    </header>
+    <!-- Сюда оболочка вставит шапку (лого, название, UA / EN / RU / ES) -->
+    <div id="mw-header"></div>
 
     <!-- Основной контент -->
     <main id="app" class="app-main" role="main">
@@ -72,7 +46,7 @@
     </main>
 
     <!-- Футер -->
-    <footer id="appFooter" class="app-footer">MindWorld School © 2025</footer>
+    <footer id="appFooter" class="app-footer">MindWorld School © 2026</footer>
 
     <!-- Меню настроек (скрыто по умолчанию) -->
     <div id="config-menu" class="config-overlay" style="display: none;">
@@ -110,103 +84,21 @@
       </div>
     </div>
 
-    <!-- Детектор языка -->
+    <!-- Шапка и язык — из общей оболочки: ?lang= → сохранённый выбор → браузер → украинский.
+         Выбранный язык передаём в модули через window.APP_LANG, смену — событием mw:langchange -->
     <script>
-      (function () {
-        const SUPPORTED_LANGS = ["ua", "en", "ru", "es"];
-        const params = new URLSearchParams(window.location.search);
-        let lang = params.get("lang");
-
-        // 1. Проверяем параметр lang в URL
-        if (!SUPPORTED_LANGS.includes(lang)) {
-          // 2. Если нет — пробуем определить по referrer
-          const referrer = document.referrer;
-
-          if (referrer) {
-            try {
-              const refUrl = new URL(referrer);
-              const refParams = new URLSearchParams(refUrl.search);
-              const refLang = refParams.get("lang");
-
-              // Проверяем параметр lang в URL источника
-              if (SUPPORTED_LANGS.includes(refLang)) {
-                lang = refLang;
-              }
-              // Проверяем путь URL источника
-              else if (refUrl.pathname.includes("/en/") || refUrl.pathname.endsWith("/en")) {
-                lang = "en";
-              } else if (refUrl.pathname.includes("/ru/") || refUrl.pathname.endsWith("/ru")) {
-                lang = "ru";
-              } else if (refUrl.pathname.includes("/es/") || refUrl.pathname.endsWith("/es")) {
-                lang = "es";
-              } else if (refUrl.pathname.includes("/ua/") || refUrl.pathname.endsWith("/ua") || refUrl.pathname.includes("/uk/")) {
-                lang = "ua";
-              }
-              // Проверяем поддомен (en.site.com, ru.site.com)
-              else if (refUrl.hostname.startsWith("en.")) {
-                lang = "en";
-              } else if (refUrl.hostname.startsWith("ru.")) {
-                lang = "ru";
-              } else if (refUrl.hostname.startsWith("es.")) {
-                lang = "es";
-              } else if (refUrl.hostname.startsWith("ua.") || refUrl.hostname.startsWith("uk.")) {
-                lang = "ua";
-              }
-              // По умолчанию для mindworldschool (украинская версия - корень без /ua/)
-              else if (refUrl.hostname.includes("mindworldschool")) {
-                lang = "ua";
-              }
-            } catch (e) {
-              // Fallback для старой логики если URL parsing не сработал
-              if (referrer.includes("/en/") || referrer.endsWith("/en")) {
-                lang = "en";
-              } else if (referrer.includes("/ru/") || referrer.endsWith("/ru")) {
-                lang = "ru";
-              } else if (referrer.includes("/es/") || referrer.endsWith("/es")) {
-                lang = "es";
-              } else if (referrer.includes("mindworldschool")) {
-                // Украинская версия без префикса /ua/ (это корень сайта)
-                lang = "ua";
-              }
-            }
-          }
-
-          // 3. Если не определили — пробуем взять из localStorage
-          if (!SUPPORTED_LANGS.includes(lang)) {
-            const saved = localStorage.getItem("soroban_lang");
-            if (SUPPORTED_LANGS.includes(saved)) {
-              lang = saved;
-            } else {
-              // 4. Язык браузера
-              const browserLang = (navigator.language || "").toLowerCase();
-              if (browserLang.startsWith("uk") || browserLang.startsWith("ua")) {
-                lang = "ua";
-              } else if (browserLang.startsWith("en")) {
-                lang = "en";
-              } else if (browserLang.startsWith("ru")) {
-                lang = "ru";
-              } else if (browserLang.startsWith("es")) {
-                lang = "es";
-              } else {
-                // 5. Язык по умолчанию
-                lang = "ua";
-              }
-            }
-          }
-        }
-
-        console.log("[Abacus Trainer] Selected language:", lang, "| Referrer:", document.referrer);
-
-        // 6. Сохраняем язык
-        localStorage.setItem("soroban_lang", lang);
-
-        // 7. Передаём язык в main.js
-        window.APP_LANG = lang;
-
-        // 8. Обновляем lang в <html>
-        const langMap = { ua: "uk", en: "en", ru: "ru", es: "es" };
-        document.documentElement.lang = langMap[lang] || "uk";
-      })();
+      MWShell.init({
+        title: "Abacus Trainer",
+        tagline: {
+          ua: "Інтерактивний тренажер абакуса",
+          en: "Interactive Abacus Trainer",
+          ru: "Интерактивный тренажер абакуса",
+          es: "Entrenador Interactivo de Ábaco"
+        },
+        docTitle: "Abacus Trainer — MindWorld School",
+        ukrainianCode: "ua",
+        onLangChange: function (lang) { window.APP_LANG = lang; }
+      });
     </script>
 
     <!-- Основной JS -->
